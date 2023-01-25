@@ -1,11 +1,24 @@
 import Timer from './timer.js';
 import Music from './musicNotation.js';
 
+var svgMusicFile = document.getElementById("music-svg-file");
+var svgDoc;
+var svgPaths;
+
+svgMusicFile.addEventListener("load", function() {
+	svgDoc = svgMusicFile.contentDocument;
+	svgPaths = svgDoc.querySelectorAll("path.Note");
+
+}, false);
+
+function changeColorOfIndex(index, colorToChangeTo) {
+	svgPaths[index].setAttribute("fill", colorToChangeTo);
+}
+
 const click1 = new Audio('/static/media/click1.mp3');
 const click2 = new Audio('/static/media/click2.mp3');
 const toggleMetronomeButton = document.querySelector('.toggleMetronomeButton');
 
-// const timeInterval = (60000/bpm) / (Number(timeSignature.split("/")[1])/4);
 let count = 0;
 
 // INITIALISATION
@@ -21,8 +34,6 @@ const timgSignatureNumerator = data_returned[2];
 const timgSignatureDenominator = data_returned[3];
 const timeInterval = (60000/bpm) / (timgSignatureDenominator/4);
 
-console.log(bpm);
-
 async function fetch_midi_to_drum_notes() {
 	const res = await fetch("http://localhost:5000/request_midi_notes_to_drum_name")
 	return res.json()
@@ -30,7 +41,7 @@ async function fetch_midi_to_drum_notes() {
 
 const midi_notes_to_drum_name = await fetch_midi_to_drum_notes()
 
-const musicNotation = new Music(music_data, timgSignatureNumerator, timeInterval, midi_notes_to_drum_name);
+let musicNotation = new Music(music_data, timgSignatureNumerator, timeInterval, midi_notes_to_drum_name, svgPaths);
 
 // REQUESTING MIDI ACCESS
 if (navigator.requestMIDIAccess) {
@@ -46,7 +57,14 @@ function success(MIDIAccess) {
 
 function handleInput(midiData) {
 	if (midiData.data[0] === 153 || midiData.data[0] === 144) {
-		musicNotation.update_music(Date.now(), midiData.data);
+		const dataForSvg = musicNotation.updateMusic(Date.now(), midiData.data);
+		if (dataForSvg) {
+			const indexesToUpdate = dataForSvg[0];
+			const colour = dataForSvg[1];
+			for (let x = 0; x < indexesToUpdate.length; x++) {
+				changeColorOfIndex(indexesToUpdate[x], colour);
+			}
+		}
 	}
 }
 
@@ -60,15 +78,14 @@ toggleMetronomeButton.addEventListener('click', () => {
 	// starting metronome
 	if (toggleMetronomeButton.textContent === "Start") {
 		metronome.start();
-		musicNotation.clear();
 		musicNotation.start(Date.now());
 		toggleMetronomeButton.textContent = 'Stop';
 	
 	// stopping metronome
 	} else {
 		metronome.stop();
-		alert(musicNotation.finish());
 		toggleMetronomeButton.textContent = 'Start';
+		location.reload();
 	}
 });
 

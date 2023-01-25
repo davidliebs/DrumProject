@@ -11,7 +11,7 @@
 		<button class="toggleMetronomeButton">Start</button>
 
 		<div id="sheet-notation-picture">
-			<img src="{{url_for('static', filename='media/challenge1.svg')}}" width="1000">
+			<object data="{{url_for('static', filename='media/challenge1.svg')}}" type="image/svg+xml" id="music-svg-file" width="70%" height="70%"></object>
 		</div>
 
 	<script type="module" src="{{url_for('static', filename='js/app.js')}}"></script>
