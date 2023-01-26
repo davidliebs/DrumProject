@@ -2,6 +2,7 @@ from mido import MidiFile, tempo2bpm
 
 note_to_drum_map = {
 	51: "ride",
+	49: "crash",
 	47: "high-tom",
 	45: "mid-tom",
 	41: "floor-tom",

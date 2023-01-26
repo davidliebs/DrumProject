@@ -56,6 +56,10 @@ function success(MIDIAccess) {
 }
 
 function handleInput(midiData) {
+	if (!musicNotation.recording) {
+		return;
+	}
+
 	if (midiData.data[0] === 153 || midiData.data[0] === 144) {
 		const dataForSvg = musicNotation.updateMusic(Date.now(), midiData.data);
 		if (dataForSvg) {

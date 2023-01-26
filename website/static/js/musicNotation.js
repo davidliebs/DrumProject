@@ -5,6 +5,7 @@ class Music{
 		this.beats_per_measure = beats_per_measure;
 		this.time_interval = time_interval;
 		this.notes_played = [];
+		this.recording = false;
 		this.createIndexesList();
 	}
 
@@ -24,14 +25,20 @@ class Music{
 
 	start(timestamp_button_clicked) {
 		this.start_challenge_time = timestamp_button_clicked + this.beats_per_measure * this.time_interval;
+		this.recording = true;
 	}
 
 	updateMusic(timestamp, midiData) {
 		let initialLength = this.notes_played.length;
 
+		if (this.notes_played.length >= this.music_data.length) {
+			this.recording = false;
+			return false;
+		}
+
 		if (this.notes_played.length === 0) {
 			this.notes_played.push([{"timestamp": timestamp, "note": midiData[1]}]);
-			return;
+			return false;
 		}
 		else if (this.notes_played[this.notes_played.length-1][0]["timestamp"]+90 > timestamp) {
 			this.notes_played[this.notes_played.length-1].push({"timestamp": timestamp, "note": midiData[1]});
@@ -56,7 +63,7 @@ class Music{
 		const timeNoteWasHit = lastNote[0]["timestamp"] - this.start_challenge_time;
 		const timeDelay = Math.abs(timeNoteWasHit - this.music_data[index]["timestamp"]);
 
-		if (timeDelay > 200) {
+		if (timeDelay > 300) {
 			// update svg orange
 			return [svgElementIndexes, "orange"];
 		}
