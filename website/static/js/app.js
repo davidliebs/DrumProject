@@ -62,12 +62,17 @@ function handleInput(midiData) {
 
 	if (midiData.data[0] === 153 || midiData.data[0] === 144) {
 		const dataForSvg = musicNotation.updateMusic(Date.now(), midiData.data);
+
 		if (dataForSvg) {
 			const indexesToUpdate = dataForSvg[0];
 			const colour = dataForSvg[1];
 			for (let x = 0; x < indexesToUpdate.length; x++) {
 				changeColorOfIndex(indexesToUpdate[x], colour);
 			}
+		}
+
+		if (!musicNotation.recording) {
+			toggleMetronomeButton.click();
 		}
 	}
 }
@@ -89,7 +94,7 @@ toggleMetronomeButton.addEventListener('click', () => {
 	} else {
 		metronome.stop();
 		toggleMetronomeButton.textContent = 'Start';
-		location.reload();
+		musicNotation.restart();
 	}
 });
 

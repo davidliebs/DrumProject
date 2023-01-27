@@ -31,11 +31,6 @@ class Music{
 	updateMusic(timestamp, midiData) {
 		let initialLength = this.notes_played.length;
 
-		if (this.notes_played.length >= this.music_data.length+1) {
-			this.recording = false;
-			return false;
-		}
-
 		if (this.notes_played.length === 0) {
 			this.notes_played.push([{"timestamp": timestamp, "note": midiData[1]}]);
 			return false;
@@ -48,6 +43,10 @@ class Music{
 		}
 
 		if (initialLength != this.notes_played.length) {
+			if (this.notes_played.length >= this.music_data.length+1) {
+				this.recording = false;
+			}
+
 			return this.returnDataToUpdateSvg();
 		}
 
@@ -77,6 +76,10 @@ class Music{
 
 		// update svg green
 		return [svgElementIndexes, "green"];
+	}
+
+	restart() {
+		this.notes_played = [];
 	}
 }
 
