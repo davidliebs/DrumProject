@@ -31,7 +31,7 @@ class Music{
 	updateMusic(timestamp, midiData) {
 		let initialLength = this.notes_played.length;
 
-		if (this.notes_played.length >= this.music_data.length) {
+		if (this.notes_played.length >= this.music_data.length+1) {
 			this.recording = false;
 			return false;
 		}
@@ -58,7 +58,7 @@ class Music{
 		const index = this.notes_played.length - 2;
 
 		const svgElementIndexes = this.svgIndexes[index];
-		const lastNote = this.notes_played[index]
+		const lastNote = this.notes_played[index];
 
 		const timeNoteWasHit = lastNote[0]["timestamp"] - this.start_challenge_time;
 		const timeDelay = Math.abs(timeNoteWasHit - this.music_data[index]["timestamp"]);
