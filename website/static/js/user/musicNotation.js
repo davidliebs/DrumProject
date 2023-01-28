@@ -83,6 +83,7 @@ class Music{
 
 	restart() {
 		this.notes_played = [];
+		this.challenge_played_correctly = true;
 	}
 }
 
