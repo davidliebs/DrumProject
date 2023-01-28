@@ -6,6 +6,7 @@ class Music{
 		this.time_interval = time_interval;
 		this.notes_played = [];
 		this.recording = false;
+		this.challenge_played_correctly = true;
 		this.createIndexesList();
 	}
 
@@ -64,6 +65,7 @@ class Music{
 
 		if (timeDelay > 300) {
 			// update svg orange
+			this.challenge_played_correctly = false;
 			return [svgElementIndexes, "orange"];
 		}
 
@@ -71,6 +73,7 @@ class Music{
 		let drums_hit = lastNote.map(x => this.midi_notes_to_drum_name[x["note"]]).sort();
 
 		if (JSON.stringify(drums_hit) != JSON.stringify(this.music_data[index]["notes"].sort())) {
+			this.challenge_played_correctly = false;
 			return [svgElementIndexes, "red"]
 		}
 

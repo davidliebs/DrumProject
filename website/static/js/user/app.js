@@ -97,6 +97,15 @@ $(document).ready(function() {
 			}
 
 			if (!musicNotation.recording) {
+				if (musicNotation.challenge_played_correctly) {
+					$("#musicSvgFile").css("border-color", "green");
+					$("#musicSvgFile").css("border-width", "8px");
+					$("#moveToNextChallengeButton").prop("disabled", false);
+					$("#moveToNextChallengeButton").addClass("btn-success").removeClass("btn-secondary");
+				} else {
+					$("#musicSvgFile").css("border-color", "red")
+					$("#musicSvgFile").css("border-width", "8px")	
+				}
 				$("#toggleMetronomeButton").trigger("click");
 			}
 		}
@@ -122,4 +131,8 @@ $(document).ready(function() {
 			musicNotation.restart();
 		}
 	});
+
+	$("#moveToNextChallengeButton").click(function() {
+		window.location.replace("/user/next_challenge");
+	})
 });
