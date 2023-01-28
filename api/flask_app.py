@@ -8,7 +8,7 @@ CORS(app)
 
 @app.route("/request_music_notation_data")
 def request_music_notation_data():
-	music_notation_data, bpm, time_signature_numerator, time_signature_denominator = midi_file_library.return_formatted_midi_notes("../website/static/media/challenge1.mid")
+	music_notation_data, bpm, time_signature_numerator, time_signature_denominator = midi_file_library.return_formatted_midi_notes("./media/challenge1.mid")
 
 	return jsonify([music_notation_data, bpm, time_signature_numerator, time_signature_denominator])
 

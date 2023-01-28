@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Challenge</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+		<script type="module" src="{{url_for('static', filename='js/user/app.js')}}"></script>
+	</head>
+
+	<body>
+		<button id="toggleMetronomeButton">Start</button>
+
+		<div id="sheet-notation-picture">
+			<object data="{{url_for('static', filename='media/challenge1.svg')}}" type="image/svg+xml" id="musicSvgFile" width="70%" height="70%"></object>
+		</div>
+	</body>
+</html>
