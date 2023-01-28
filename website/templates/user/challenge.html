@@ -12,7 +12,11 @@
 		<button id="toggleMetronomeButton">Start</button>
 
 		<div id="sheet-notation-picture">
-			<object data="{{url_for('static', filename='media/challenge1.svg')}}" type="image/svg+xml" id="musicSvgFile" width="70%" height="70%"></object>
+			<object data="{{ url_for('serve_challenge_svg', challengeId=challengeId )}}" type="image/svg+xml" id="musicSvgFile" width="70%" height="70%"></object>
 		</div>
+
+		<script>
+			var challengeId = "{{challengeId}}";
+		</script>
 	</body>
 </html>

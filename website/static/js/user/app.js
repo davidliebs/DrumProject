@@ -9,7 +9,10 @@ const click2 = new Audio('/static/media/click2.mp3');
 async function fetchMusicNotationData() {
 	const result = await $.ajax({
 		url: "http://localhost:5000/request_music_notation_data",
-		type: 'GET',
+		data: {
+			challengeId: challengeId
+		},
+		type: 'GET'
 	});
 
 	const musicData = result[0];
