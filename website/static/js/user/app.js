@@ -40,6 +40,12 @@ function changeColorOfIndex(svgPaths, index, colorToChangeTo) {
 	svgPaths[index].setAttribute("fill", colorToChangeTo);
 }
 
+function resetSvg(svgPaths) {
+	for (let index = 0; index < svgPaths.length; index++) {
+		svgPaths[index].setAttribute("fill", "black");
+	}
+}
+
 function playClick() {
 	if (metronomeCount == musicNotationData["timeSignatureNumerator"]) {
 		metronomeCount = 0;
@@ -106,6 +112,7 @@ $(document).ready(function() {
 		if ($("#toggleMetronomeButton").text() == "Start") {
 			metronome.start();
 			musicNotation.start(Date.now());
+			resetSvg(svgPaths);
 			$("#toggleMetronomeButton").text("Stop");
 		
 		// stopping metronome
