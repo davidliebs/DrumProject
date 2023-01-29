@@ -7,23 +7,23 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-@app.route("/request_music_notation_data")
+@app.route("/user/request_music_notation_data")
 def request_music_notation_data():
 	challengeId = request.args.get("challengeId")
 	filename = challengeId + ".mid"
 
-	music_notation_data, bpm, time_signature_numerator, time_signature_denominator = midi_file_library.return_formatted_midi_notes(os.path.join("./static/media", filename))
+	music_notation_data = midi_file_library.return_formatted_midi_notes(os.path.join("./static/media", filename))
 
-	return jsonify([music_notation_data, bpm, time_signature_numerator, time_signature_denominator])
+	return jsonify(music_notation_data)
 
-@app.route("/serve_challenge_svg")
+@app.route("/user/serve_challenge_svg")
 def serve_challenge_svg():
 	challengeId = request.args.get("challengeId")
 	filename = challengeId + ".svg"
 
 	return send_from_directory("./static/media", filename)
 
-@app.route("/request_midi_notes_to_drum_name")
+@app.route("/user/request_midi_notes_to_drum_name")
 def request_midi_notes_to_drum_name():
 	data = {
 		40: "snare",

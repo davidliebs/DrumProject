@@ -5,37 +5,6 @@ var metronomeCount = 0;
 const click1 = new Audio('/static/media/click1.mp3');
 const click2 = new Audio('/static/media/click2.mp3');
 
-// fetching music notation data
-async function fetchMusicNotationData() {
-	const result = await $.ajax({
-		url: "http://localhost:5000/request_music_notation_data",
-		data: {
-			challengeId: challengeId
-		},
-		type: 'GET'
-	});
-
-	const musicData = result[0];
-	const bpm = result[1];
-	const timeSignatureNumerator = result[2];
-	const timeSignatureDenominator = result[3];
-	const timeInterval = (60000/bpm) / (timeSignatureDenominator/4);	
-
-	return {"musicData": musicData, "bpm": bpm, "timeSignatureNumerator": timeSignatureNumerator, "timeSignatureDenominator": timeSignatureDenominator, "timeInterval": timeInterval};
-}
-const musicNotationData = await fetchMusicNotationData();
-
-// fetching midi notes to drum name
-async function fetchMidiNotesToDrumName() {
-	const result = await $.ajax({
-		url: "http://localhost:5000/request_midi_notes_to_drum_name",
-		type: 'GET',
-	});
-
-	return result;
-}
-const midiNotesToDrumName = await fetchMidiNotesToDrumName();
-
 function changeColorOfIndex(svgPaths, index, colorToChangeTo) {
 	svgPaths[index].setAttribute("fill", colorToChangeTo);
 }
@@ -60,7 +29,7 @@ function playClick() {
 	metronomeCount++;
 }
 
-$(document).ready(function() {
+$(window).on("load", function() {
 	var svgMusicFile = document.getElementById("musicSvgFile");
 	var svgDoc = svgMusicFile.contentDocument;
 	var svgPaths = svgDoc.querySelectorAll("path.Note");

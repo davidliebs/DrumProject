@@ -37,5 +37,12 @@ def return_formatted_midi_notes(filepath):
 
 	for i in midi_notes:
 		formatted_midi_notes.append({"timestamp": i, "notes": midi_notes[i]})
+	
+	time_interval = (60000/midi_bpm) / (time_signature_denominator/4)
 
-	return formatted_midi_notes, midi_bpm, time_signature_numerator, time_signature_denominator
+	return {"musicData": formatted_midi_notes, 
+			"bpm": midi_bpm,
+			"timeSignatureNumerator": time_signature_numerator,
+			"timeSignatureDenominator": time_signature_denominator,
+			"timeInterval": time_interval
+	}
