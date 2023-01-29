@@ -13,7 +13,7 @@ def user_home():
 
 	session["challengeNo"] = 1
 
-	return render_template("user/index.html")
+	return render_template("user/home.html")
 
 @app.route("/user/signup", methods=["GET", "POST"])
 def user_signup():
