@@ -6,10 +6,45 @@ import uuid
 app = Flask(__name__)
 app.secret_key = uuid.uuid4().hex
 
-@app.route("/user")
+@app.route("/user/home")
 def user_home():
+	if not session.get("userID", False):
+		return redirect("/user/login")
+
 	session["challengeNo"] = 1
+
 	return render_template("user/index.html")
+
+@app.route("/user/signup", methods=["GET", "POST"])
+def user_signup():
+	if request.method == "GET":
+		return render_template("user/signup.html")
+	
+	user_email = request.form["userEmail"]
+	user_pwd = request.form["userPassword"]
+
+	data = {"userEmail": user_email, "userPassword": user_pwd}
+	res = requests.post("http://localhost:5000/user/signup", json=data)
+
+	return redirect("/user/login")
+
+@app.route("/user/login", methods=["GET", "POST"])
+def user_login():
+	if request.method == "GET":
+		return render_template("user/login.html")
+
+	user_email = request.form["userEmail"]
+	user_pwd = request.form["userPassword"]
+
+	data = {"userEmail": user_email, "userPassword": user_pwd}
+	res = requests.post("http://localhost:5000/user/login", json=data).json()
+
+	if res == "Incorrect":
+		return redirect("/user/login")
+
+	session["userID"] = res
+	
+	return redirect("/user/home")
 
 @app.route("/user/challenge")
 def challenge():

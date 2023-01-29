@@ -3,9 +3,51 @@ from flask_cors import CORS
 import json
 import midi_file_library
 import os
+import uuid
+import bcrypt
+import mysql.connector
 
 app = Flask(__name__)
-CORS(app)
+
+conn = mysql.connector.connect(
+	user = "david",
+	password = "open1010",
+	database = "DrumApp",
+	host = "127.0.0.1",
+	port = 3306
+)
+cur = conn.cursor()
+
+@app.route("/user/signup", methods=["POST"])
+def user_signup():
+	signup_data = request.json
+
+	userID = str(uuid.uuid4())
+	hashed_password = bcrypt.hashpw(signup_data["userPassword"], bcrypt.gensalt())
+
+	cur.execute(f"""
+		INSERT INTO users
+		VALUES ('{userID}', '{signup_data["userEmail"]}', '{hashed_password}')
+	""")
+
+	conn.commit()
+
+	return jsonify(userID)
+
+@app.route("/user/login", methods=["POST"])
+def user_login():
+	login_data = request.json
+
+	cur.execute(f"""
+		SELECT userID, userPassword FROM users
+		WHERE userEmail = '{login_data["userEmail"]}'
+	""")
+	returned_data = cur.fetchone()
+
+	if bcrypt.checkpw(login_data["userPassword"], returned_data[1]):
+		return jsonify(returned_data[0])
+	else:
+		return jsonify("Incorrect")
 
 @app.route("/user/request_music_notation_data")
 def request_music_notation_data():

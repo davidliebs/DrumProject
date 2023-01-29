@@ -16,3 +16,15 @@
 	width: 100%;
 	border-radius: 20px;
 }
+
+.form-group {
+	margin: 10px;
+}
+
+#signupButton {
+	margin: 10px;
+}
+
+#signupCard {
+	margin: 10px;
+}
