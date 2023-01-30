@@ -51,19 +51,36 @@ def user_login():
 
 @app.route("/user/request_music_notation_data")
 def request_music_notation_data():
-	challengeId = request.args.get("challengeId")
-	filename = challengeId + ".mid"
+	challengeID = request.args.get("challengeID")
 
-	music_notation_data = midi_file_library.return_formatted_midi_notes(os.path.join("./static/media", filename))
+	cur.execute(f"SELECT musicData FROM challenges WHERE challengeID = '{challengeID}'")
+	music_notation_data = cur.fetchone()[0]
 
-	return jsonify(music_notation_data)
+	return music_notation_data
 
 @app.route("/user/serve_challenge_svg")
 def serve_challenge_svg():
-	challengeId = request.args.get("challengeId")
-	filename = challengeId + ".svg"
+	challengeID = request.args.get("challengeID")
 
-	return send_from_directory("./static/media", filename)
+	cur.execute(f"SELECT challengeSvgFilePath FROM challenges WHERE challengeID = '{challengeID}'")
+	challenge_svg_filepath = cur.fetchone()[0]
+
+	return send_from_directory(challenge_svg_filepath.replace(os.path.basename(challenge_svg_filepath), ""), os.path.basename(challenge_svg_filepath))
+
+@app.route("/user/get_next_challengeID")
+def get_next_challenge_id():
+	challengeID = request.args.get("challengeID")
+
+	cur.execute(f"SELECT challengeNo FROM challenges WHERE challengeID = '{challengeID}'")
+	challenge_no = cur.fetchone()[0]
+
+	cur.execute(f"SELECT challengeID FROM challenges WHERE challengeNo = '{challenge_no+1}'")
+	nextChallengeID = cur.fetchone()
+
+	if nextChallengeID == None:
+		return jsonify("Finished")
+
+	return jsonify(nextChallengeID[0])
 
 @app.route("/user/request_midi_notes_to_drum_name")
 def request_midi_notes_to_drum_name():

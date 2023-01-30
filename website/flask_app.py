@@ -2,6 +2,7 @@ from flask import Flask, render_template, url_for, session, request, send_file, 
 import requests
 from io import BytesIO
 import uuid
+import json
 
 app = Flask(__name__)
 app.secret_key = uuid.uuid4().hex
@@ -11,7 +12,7 @@ def user_home():
 	if not session.get("userID", False):
 		return redirect("/user/login")
 
-	session["challengeNo"] = 1
+	session["challengeID"] = "f7521196-2a5e-4e3c-af2f-04e7896d7b39"
 
 	return render_template("user/home.html")
 
@@ -48,22 +49,19 @@ def user_login():
 
 @app.route("/user/challenge")
 def challenge():
-	if not session.get("challengeNo", False):
-		session["challengeNo"] = 1
-
 	# fetching required data from api
-	params = {"challengeId": "challenge"+str(session["challengeNo"])}
+	params = {"challengeID": session["challengeID"]}
 	res = requests.get("http://localhost:5000/user/request_music_notation_data", params=params)
 	music_notation_data = res.json()
 
 	res = requests.get("http://localhost:5000/user/request_midi_notes_to_drum_name")
 	midi_notes_to_drum_name = res.json()
 
-	return render_template("user/challenge.html", challengeId="challenge"+str(session["challengeNo"]), music_notation_data=music_notation_data, midi_notes_to_drum_name=midi_notes_to_drum_name)
+	return render_template("user/challenge.html", challengeId=session["challengeID"], music_notation_data=music_notation_data, midi_notes_to_drum_name=midi_notes_to_drum_name)
 
 @app.route("/user/fetch_challenge_svg")
 def fetch_challenge_svg():
-	params = {"challengeId": "challenge"+str(session["challengeNo"])}
+	params = {"challengeID": session["challengeID"]}
 	res = requests.get("http://127.0.0.1:5000/user/serve_challenge_svg", params=params)
 
 	file_obj = BytesIO(res.content)
@@ -71,10 +69,13 @@ def fetch_challenge_svg():
 
 @app.route("/user/next_challenge")
 def next_challenge():
-	if not session.get("challengeNo", False):
-		session["challengeNo"] = 1
-	else:
-		session["challengeNo"] += 1
+	if not session.get("challengeID", False):
+		return redirect("/user/home")
+
+	params = {"challengeID": session["challengeID"]}
+	res = requests.get("http://127.0.0.1:5000/user/get_next_challengeID", params=params)
+
+	session["challengeID"] = res.json()
 
 	return redirect("/user/challenge")
 
