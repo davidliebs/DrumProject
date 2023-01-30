@@ -57,7 +57,7 @@ def challenge():
 	res = requests.get("http://localhost:5000/user/request_midi_notes_to_drum_name")
 	midi_notes_to_drum_name = res.json()
 
-	return render_template("user/challenge.html", challengeId=session["challengeID"], music_notation_data=music_notation_data, midi_notes_to_drum_name=midi_notes_to_drum_name)
+	return render_template("user/challenge.html", music_notation_data=music_notation_data, midi_notes_to_drum_name=midi_notes_to_drum_name)
 
 @app.route("/user/fetch_challenge_svg")
 def fetch_challenge_svg():
