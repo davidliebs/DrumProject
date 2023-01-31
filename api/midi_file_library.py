@@ -9,7 +9,8 @@ note_to_drum_map = {
 	42: "closed hi-hat",
 	38: "snare",
 	40: "snare",
-	35: "bass drum"
+	35: "bass drum",
+	36: "bass drum"
 }
 
 def return_formatted_midi_notes(filepath):
@@ -18,7 +19,6 @@ def return_formatted_midi_notes(filepath):
 	midi_notes = {}
 	formatted_midi_notes = []
 
-	time_since_started = 0
 	for i in mid:
 		if i.type == "time_signature":
 			time_signature_numerator = i.numerator
@@ -27,13 +27,15 @@ def return_formatted_midi_notes(filepath):
 		elif i.type == "set_tempo":
 			midi_bpm = round(tempo2bpm(i.tempo), 0)
 
-		elif i.type == "note_on" and i.velocity == 0:
-			time_since_started += i.time * 1000
+	required_data = [i for i in mid if i.type == "note_on" and i.velocity == 0]
+	time_since_started = -required_data[0].time * 1000
+	for i in required_data:
+		time_since_started += i.time * 1000
 
-			if midi_notes.get(time_since_started, False):
-				midi_notes[time_since_started].append(note_to_drum_map[i.note])
-			else:
-				midi_notes[time_since_started] = [(note_to_drum_map[i.note])]
+		if midi_notes.get(time_since_started, False):
+			midi_notes[time_since_started].append(note_to_drum_map[i.note])
+		else:
+			midi_notes[time_since_started] = [(note_to_drum_map[i.note])]
 
 	for i in midi_notes:
 		formatted_midi_notes.append({"timestamp": i, "notes": midi_notes[i]})
