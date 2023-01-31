@@ -85,9 +85,10 @@ def request_music_notation_data():
 
 @app.route("/user/serve_challenge_svg")
 def serve_challenge_svg():
+	courseID = request.args.get("courseID")
 	challengeID = request.args.get("challengeID")
 
-	cur.execute(f"SELECT challengeSvgFilePath FROM challenges WHERE challengeID = '{challengeID}'")
+	cur.execute(f"SELECT challengeSvgFilePath FROM challenges WHERE courseID='{courseID}' AND challengeID='{challengeID}'")
 	challenge_svg_filepath = cur.fetchone()[0]
 
 	return send_from_directory(challenge_svg_filepath.replace(os.path.basename(challenge_svg_filepath), ""), os.path.basename(challenge_svg_filepath))

@@ -67,7 +67,7 @@ def challenge():
 
 @app.route("/user/fetch_challenge_svg")
 def fetch_challenge_svg():
-	params = {"challengeID": session["challengeID"]}
+	params = {"courseID": session["courseID"], "challengeID": session["challengeID"]}
 	res = requests.get("http://127.0.0.1:5000/user/serve_challenge_svg", params=params)
 
 	file_obj = BytesIO(res.content)
