@@ -6,17 +6,45 @@
 		<title>DrumCo</title>
 
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/user/styles.css') }}">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 	</head>
 
 	<body>
-		<div class="container-fluid">
+		<div class="container">
 			<div class="row">
-				<h1>Welcome to DrumCo</h1>
+				<div class="col-lg-12">
+					<h1>Welcome to DrumCo</h1>
+				</div>
 			</div>
-			
+
 			<div class="row">
-				<div class="col">
-					<a class="btn btn-primary" href="/user/challenge" role="button">Continue to challenge 1</a>
+				<div class="col-lg-12">
+					<h3 id="courses-heading">Courses you've enrolled to</h3>
+					{% for course in courses["courses enrolled"] %}
+						<div class="card" id="courseCard">
+							<div class="card-body">
+								<h5 class="card-title">{{course[1]}}</h5>
+								<p class="card-text">{{course[2]}}.</p>
+								<a class="btn btn-primary" href="/user/next_challenge?courseID={{course[0]}}" role="button">Continue</a>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-lg-12">
+					<h3 id="courses-heading">Available courses</h3>
+					{% for course in courses["other courses"] %}
+						<div class="card" id="courseCard">
+							<div class="card-body">
+								<h5 class="card-title">{{course[1]}}</h5>
+								<p class="card-text">{{course[2]}}.</p>
+								<a class="btn btn-primary" href="/user/enroll-course?courseID={{course[0]}}" role="button">Enroll</a>
+							</div>
+						</div>
+					{% endfor %}
 				</div>
 			</div>
 		</div>

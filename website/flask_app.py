@@ -11,10 +11,13 @@ app.secret_key = uuid.uuid4().hex
 def user_home():
 	if not session.get("userID", False):
 		return redirect("/user/login")
+	
+	# fetching courses to display from api
+	params = {"userID": session["userID"]}
+	res = requests.get("http://localhost:5000/user/get_available_courses", params=params)
+	courses = res.json()
 
-	session["challengeID"] = "f7521196-2a5e-4e3c-af2f-04e7896d7b39"
-
-	return render_template("user/home.html")
+	return render_template("user/home.html", courses=courses)
 
 @app.route("/user/signup", methods=["GET", "POST"])
 def user_signup():
@@ -49,15 +52,18 @@ def user_login():
 
 @app.route("/user/challenge")
 def challenge():
+	if session["challengeID"] == "Finished":
+		return redirect("/user/home")
+
 	# fetching required data from api
-	params = {"challengeID": session["challengeID"]}
+	params = {"courseID": session["courseID"], "challengeID": session["challengeID"]}
 	res = requests.get("http://localhost:5000/user/request_music_notation_data", params=params)
 	music_notation_data = res.json()
 
 	res = requests.get("http://localhost:5000/user/request_midi_notes_to_drum_name")
 	midi_notes_to_drum_name = res.json()
 
-	return render_template("user/challenge.html", music_notation_data=music_notation_data, midi_notes_to_drum_name=midi_notes_to_drum_name)
+	return render_template("user/challenge.html", courseID=session["courseID"], challengeID=session["challengeID"], music_notation_data=music_notation_data, midi_notes_to_drum_name=midi_notes_to_drum_name)
 
 @app.route("/user/fetch_challenge_svg")
 def fetch_challenge_svg():
@@ -69,14 +75,26 @@ def fetch_challenge_svg():
 
 @app.route("/user/next_challenge")
 def next_challenge():
-	if not session.get("challengeID", False):
-		return redirect("/user/home")
+	courseID = request.args.get("courseID")
+	challengeID = request.args.get("challengeID")
 
-	params = {"challengeID": session["challengeID"]}
+	session["courseID"] = courseID
+
+	params = {"courseID": courseID, "challengeID": challengeID}
 	res = requests.get("http://127.0.0.1:5000/user/get_next_challengeID", params=params)
 
 	session["challengeID"] = res.json()
 
 	return redirect("/user/challenge")
+
+@app.route("/user/enroll-course")
+def enroll_course():
+	userID = session["userID"]
+	courseID = request.args.get("courseID")
+
+	params = {"userID": userID, "courseID": courseID}
+	res = requests.get("http://127.0.0.1:5000/user/enroll_course", params=params)
+	
+	return redirect("/user/home")
 
 app.run(port=8888, debug=True)

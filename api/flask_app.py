@@ -49,11 +49,36 @@ def user_login():
 	else:
 		return jsonify("Incorrect")
 
+@app.route("/user/get_available_courses")
+def get_available_courses():
+	userID = request.args.get("userID")
+
+	# SELECT courses.courseID, courses.courseName, courses.Descr  FROM coursesEnrolled WHERE userID = '{userID}'
+	cur.execute(f"""
+		SELECT * FROM courses WHERE courseID IN (SELECT courseID FROM coursesEnrolled WHERE userID = '{userID}');
+	""")
+
+	courses_enrolled = cur.fetchall()
+
+	cur.execute(f"""
+		SELECT * FROM courses WHERE courseID NOT IN (SELECT courseID FROM coursesEnrolled WHERE userID = '{userID}');
+	""")
+
+	other_courses = cur.fetchall()
+
+	data_to_return = {
+		"courses enrolled": courses_enrolled,
+		"other courses": other_courses
+	}
+
+	return jsonify(data_to_return)
+
 @app.route("/user/request_music_notation_data")
 def request_music_notation_data():
+	courseID = request.args.get("courseID")
 	challengeID = request.args.get("challengeID")
 
-	cur.execute(f"SELECT musicData FROM challenges WHERE challengeID = '{challengeID}'")
+	cur.execute(f"SELECT musicData FROM challenges WHERE courseID = '{courseID}' AND challengeID = '{challengeID}'")
 	music_notation_data = cur.fetchone()[0]
 
 	return music_notation_data
@@ -69,18 +94,36 @@ def serve_challenge_svg():
 
 @app.route("/user/get_next_challengeID")
 def get_next_challenge_id():
+	courseID = request.args.get("courseID")
 	challengeID = request.args.get("challengeID")
 
-	cur.execute(f"SELECT challengeNo FROM challenges WHERE challengeID = '{challengeID}'")
-	challenge_no = cur.fetchone()[0]
-
-	cur.execute(f"SELECT challengeID FROM challenges WHERE challengeNo = '{challenge_no+1}'")
-	nextChallengeID = cur.fetchone()
+	if challengeID == None:
+		cur.execute(f"SELECT challengeID FROM challenges WHERE courseID = '{courseID}' AND challengeNo = 1")
+		nextChallengeID = cur.fetchone()
+	else:
+		cur.execute(f"SELECT challengeNo FROM challenges WHERE courseID = '{courseID}' AND challengeId = '{challengeID}'")
+		challenge_no = cur.fetchone()[0]
+		cur.execute(f"SELECT challengeID FROM challenges WHERE courseID = '{courseID}' AND challengeNo = {challenge_no+1}")
+		nextChallengeID = cur.fetchone()
 
 	if nextChallengeID == None:
 		return jsonify("Finished")
 
 	return jsonify(nextChallengeID[0])
+
+@app.route("/user/enroll_course")
+def enroll_course():
+	userID = request.args.get("userID")
+	courseID = request.args.get("courseID")
+
+	cur.execute(f"""
+		INSERT INTO coursesEnrolled
+		VALUES ('{userID}', '{courseID}', 0) 
+	""")
+
+	conn.commit()
+
+	return "Success"
 
 @app.route("/user/request_midi_notes_to_drum_name")
 def request_midi_notes_to_drum_name():

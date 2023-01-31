@@ -102,6 +102,6 @@ $(window).on("load", function() {
 	});
 
 	$("#moveToNextChallengeButton").click(function() {
-		window.location.replace("/user/next_challenge");
+		window.location.replace(`/user/next_challenge?courseID=${courseID}&challengeID=${challengeID}`);
 	})
 });
