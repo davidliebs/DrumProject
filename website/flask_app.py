@@ -58,12 +58,12 @@ def challenge():
 	# fetching required data from api
 	params = {"courseID": session["courseID"], "challengeID": session["challengeID"]}
 	res = requests.get("http://localhost:5000/user/request_music_notation_data", params=params)
-	music_notation_data = res.json()
+	music_notation_data, svg_indexes = res.json()
 
 	res = requests.get("http://localhost:5000/user/request_midi_notes_to_drum_name")
 	midi_notes_to_drum_name = res.json()
 
-	return render_template("user/challenge.html", courseID=session["courseID"], challengeID=session["challengeID"], music_notation_data=music_notation_data, midi_notes_to_drum_name=midi_notes_to_drum_name)
+	return render_template("user/challenge.html", courseID=session["courseID"], challengeID=session["challengeID"], music_notation_data=music_notation_data, midi_notes_to_drum_name=midi_notes_to_drum_name, svg_indexes=svg_indexes)
 
 @app.route("/user/fetch_challenge_svg")
 def fetch_challenge_svg():

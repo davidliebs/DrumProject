@@ -35,7 +35,7 @@ $(window).on("load", function() {
 	var svgPaths = svgDoc.querySelectorAll("path.Note");
 
 	const metronome = new Timer(playClick, musicNotationData["timeInterval"], { immediate: true });
-	var musicNotation = new Music(musicNotationData["musicData"], musicNotationData["timeSignatureNumerator"], musicNotationData["timeInterval"], midiNotesToDrumName, svgPaths);
+	var musicNotation = new Music(musicNotationData["musicData"], musicNotationData["timeSignatureNumerator"], musicNotationData["timeInterval"], midiNotesToDrumName, svgIndexes);
 
 	// MIDI handling
 	if (navigator.requestMIDIAccess) {

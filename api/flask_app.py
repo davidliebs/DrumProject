@@ -1,7 +1,5 @@
 from flask import Flask, render_template, jsonify, send_from_directory, request
-from flask_cors import CORS
 import json
-import midi_file_library
 import os
 import uuid
 import bcrypt
@@ -78,10 +76,10 @@ def request_music_notation_data():
 	courseID = request.args.get("courseID")
 	challengeID = request.args.get("challengeID")
 
-	cur.execute(f"SELECT musicData FROM challenges WHERE courseID = '{courseID}' AND challengeID = '{challengeID}'")
-	music_notation_data = cur.fetchone()[0]
+	cur.execute(f"SELECT musicData, svgIndexes FROM challenges WHERE courseID = '{courseID}' AND challengeID = '{challengeID}'")
+	music_notation_data = cur.fetchone()
 
-	return music_notation_data
+	return jsonify(music_notation_data)
 
 @app.route("/user/serve_challenge_svg")
 def serve_challenge_svg():

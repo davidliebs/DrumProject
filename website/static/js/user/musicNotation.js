@@ -1,5 +1,5 @@
 class Music{
-	constructor(music_data, beats_per_measure, time_interval, midi_notes_to_drum_name, musicSvgPaths) {
+	constructor(music_data, beats_per_measure, time_interval, midi_notes_to_drum_name, svgIndexes) {
 		this.music_data = music_data;
 		this.midi_notes_to_drum_name = midi_notes_to_drum_name;
 		this.beats_per_measure = beats_per_measure;
@@ -7,21 +7,7 @@ class Music{
 		this.notes_played = [];
 		this.recording = false;
 		this.challenge_played_correctly = true;
-		this.createIndexesList();
-	}
-
-	createIndexesList() {
-		this.svgIndexes = [];
-		let svgIndex = 0
-		for (let index in this.music_data) {
-			let tempList = [];
-			let notes = this.music_data[index]["notes"];
-			for (let x = 0; x < notes.length; x++) {
-				tempList.push(svgIndex);
-				svgIndex ++;
-			}
-		this.svgIndexes.push(tempList);
-		}
+		this.svgIndexes = svgIndexes
 	}
 
 	start(timestamp_button_clicked) {

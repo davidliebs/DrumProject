@@ -33,8 +33,9 @@
 		<script>
 			var courseID = "{{courseID}}";
 			var challengeID = "{{challengeID}}";
-			var musicNotationData = JSON.parse('{{music_notation_data | tojson}}');
+			var musicNotationData = JSON.parse({{music_notation_data|tojson}});
 			var midiNotesToDrumName = JSON.parse('{{midi_notes_to_drum_name | tojson}}');
+			var svgIndexes = JSON.parse({{svg_indexes|tojson}});
 		</script>
 	</body>
 </html>
