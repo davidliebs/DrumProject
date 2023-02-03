@@ -31,8 +31,10 @@
 
 #courses-heading {
 	margin-top: 10px;
+	font-family: 'Courier New', Courier, monospace;
 }
 
 #courseCard {
 	margin-top: 10px;
+	width: 100%;
 }
