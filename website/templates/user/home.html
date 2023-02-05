@@ -15,23 +15,29 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<div id="logo">
-						<img src="{{url_for('static', filename='media/beatbuddylogo.svg')}}" width="230px"/>
+						<img src="{{url_for('static', filename='media/beatbuddylogo.svg')}}" width="200px"/>
 					</div>
 				</div>
 			</div>
 
 			<div class="row">
-				<div class="col-lg-10 offset-lg-1">
-					<h3 id="courses-heading">My Courses</h3>
-					{% for course in courses["courses enrolled"] %}
-						<div class="card" id="courseCard">
-							<div class="card-body">
-								<h5 class="card-title">{{course[1]}}</h5>
-								<p class="card-text">{{course[2]}}</p>
-								<a class="btn btn-primary" href="/user/next_challenge?courseID={{course[0]}}" role="button">Continue</a>
+				<div class="col-lg-8 offset-lg-1">
+					<div class="user-courses-block">
+						<h3 id="courses-heading">My Courses</h3>
+						{% for course in courses["courses enrolled"] %}
+							<div id="course-block">
+								<div class="row">
+									<div class="col-8">
+										<h3 id="course-course">COURSE</h3>
+										<h3 id="course-title">{{course[1]}}</h3>
+									</div>
+									<div class="col-4">
+										<a id="course-continue-button" class="btn btn-primary" href="/user/next_challenge?courseID={{course[0]}}" role="button">Resume Learning</a>
+									</div>
+								</div>
 							</div>
-						</div>
-					{% endfor %}
+						{% endfor %}
+					</div>
 				</div>
 			</div>
 
