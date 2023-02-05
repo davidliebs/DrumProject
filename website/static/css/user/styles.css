@@ -49,19 +49,19 @@
 	background-color: white;
 }
 
-#course-course {
+.course-info {
 	font-size: 19px;
 	font-family: 'Courier New', Courier, monospace;
 	padding-left: 25px;
+}
+
+.course-course {
 	padding-top: 25px;
 }
 
-#course-title {
-	font-size: 19px;
-	font-family: 'Courier New', Courier, monospace;
-	padding-left: 25px;
-	padding-bottom: 25px;
+.course-title {
 	font-weight: bold;
+	padding-bottom: 25px;
 }
 
 #course-continue-button {
