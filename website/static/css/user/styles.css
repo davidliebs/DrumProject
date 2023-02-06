@@ -2,21 +2,28 @@
 	background-color: #fff0e5;
 }
 
+#challenge-page {
+	background-color: #fff0e5;
+}
+
 #musicSvgFile {
-	border: 4px solid black;
+	background-color: #ffffff;
 	border-radius: 20px;
+}
+
+#challengeButtonsRow {
+	margin-top: 4%;
+	margin-bottom: 1%;
 }
 
 #toggleMetronomeButton {
-	margin-top: 10px;
-	margin-bottom: 10px;
 	width: 100%;
 	border-radius: 20px;
+	background-color: #3a10e5;
+	border-color: #3a10e5;
 }
 
 #moveToNextChallengeButton {
-	margin-top: 10px;
-	margin-bottom: 10px;
 	width: 100%;
 	border-radius: 20px;
 }
