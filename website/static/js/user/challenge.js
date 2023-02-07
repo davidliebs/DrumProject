@@ -67,13 +67,9 @@ $(window).on("load", function() {
 
 			if (!musicNotation.recording) {
 				if (musicNotation.challenge_played_correctly) {
-					$("#musicSvgFile").css("border-color", "green");
-					$("#musicSvgFile").css("border-width", "8px");
 					$("#moveToNextChallengeButton").prop("disabled", false);
-					$("#moveToNextChallengeButton").addClass("btn-success").removeClass("btn-secondary");
-				} else {
-					$("#musicSvgFile").css("border-color", "red")
-					$("#musicSvgFile").css("border-width", "8px")	
+					$("#moveToNextChallengeButton").css("background-color", getComputedStyle(document.documentElement).getPropertyValue('--secondary-color'));
+					$("#moveToNextChallengeButton").css("border-color", getComputedStyle(document.documentElement).getPropertyValue('--secondary-color'));
 				}
 				$("#toggleMetronomeButton").trigger("click");
 			}

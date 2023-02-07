@@ -1,9 +1,14 @@
+:root {
+	--primary-color: #A3E7FC;
+	--secondary-color: #23CE6B;
+}
+
 #home-page {
-	background-color: #fff0e5;
+	background-color: var(--primary-color);
 }
 
 #challenge-page {
-	background-color: #fff0e5;
+	background-color: var(--primary-color);
 }
 
 #musicSvgFile {
@@ -19,8 +24,8 @@
 #toggleMetronomeButton {
 	width: 100%;
 	border-radius: 20px;
-	background-color: #3a10e5;
-	border-color: #3a10e5;
+	background-color: var(--secondary-color);
+	border-color: var(--secondary-color)
 }
 
 #moveToNextChallengeButton {
@@ -72,8 +77,8 @@
 }
 
 #course-continue-button {
-	background-color: #3a10e5;
-	border-color: #3a10e5;
+	background-color: var(--secondary-color);
+	border-color: var(--secondary-color);
 	font-family: 'Courier New', Courier, monospace;
 	font-weight: bold;
 	margin-top: 25px;

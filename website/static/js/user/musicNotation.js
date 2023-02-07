@@ -64,7 +64,7 @@ class Music{
 		}
 
 		// update svg green
-		return [svgElementIndexes, "green"];
+		return [svgElementIndexes, "#23CE6B"];
 	}
 
 	restart() {
