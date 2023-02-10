@@ -4,6 +4,7 @@ import Music from './musicNotation.js';
 var metronomeCount = 0;
 const click1 = new Audio('/static/media/click1.mp3');
 const click2 = new Audio('/static/media/click2.mp3');
+const successSound = new Audio('/static/media/success-sound.mp3')
 
 function changeColorOfIndex(svgPaths, index, colorToChangeTo) {
 	svgPaths[index].setAttribute("fill", colorToChangeTo);
@@ -67,6 +68,7 @@ $(window).on("load", function() {
 
 			if (!musicNotation.recording) {
 				if (musicNotation.challenge_played_correctly) {
+					successSound.play();
 					$("#moveToNextChallengeButton").prop("disabled", false);
 					$("#moveToNextChallengeButton").css("background-color", getComputedStyle(document.documentElement).getPropertyValue('--secondary-color'));
 					$("#moveToNextChallengeButton").css("border-color", getComputedStyle(document.documentElement).getPropertyValue('--secondary-color'));
