@@ -1,6 +1,7 @@
 :root {
 	--primary-color: #A3E7FC;
 	--secondary-color: #23CE6B;
+	--font-family: 'Courier New', Courier, monospace;
 }
 
 #home-page {
@@ -8,6 +9,14 @@
 }
 
 #challenge-page {
+	background-color: var(--primary-color);
+}
+
+#login-page {
+	background-color: var(--primary-color);
+}
+
+#signup-page {
 	background-color: var(--primary-color);
 }
 
@@ -37,12 +46,13 @@
 	margin: 10px;
 }
 
-#signupButton {
-	margin: 10px;
-}
-
-#signupCard {
-	margin: 10px;
+.form-block {
+	margin-top: 30px;
+	padding: 10px;
+	border-radius: 10px;
+	background-color: #ffffff;
+	font-family: var(--font-family);
+	font-weight: bold;
 }
 
 .user-courses-block {
@@ -52,7 +62,7 @@
 #courses-heading {
 	margin-top: 20px;
 	margin-bottom: 25px;
-	font-family: 'Courier New', Courier, monospace;
+	font-family: var(--font-family);
 	font-weight: bold;
 }
 
@@ -63,7 +73,7 @@
 
 .course-info {
 	font-size: 19px;
-	font-family: 'Courier New', Courier, monospace;
+	font-family: var(--font-family);
 	padding-left: 25px;
 }
 
@@ -79,7 +89,14 @@
 #course-continue-button {
 	background-color: var(--secondary-color);
 	border-color: var(--secondary-color);
-	font-family: 'Courier New', Courier, monospace;
+	font-family: var(--font-family);
 	font-weight: bold;
 	margin-top: 25px;
+}
+
+#submitButton {
+	background-color: var(--secondary-color);
+	border-color: var(--secondary-color);
+	margin: 10px;
+	font-weight: bold;
 }
