@@ -31,6 +31,8 @@
 }
 
 #toggleMetronomeButton {
+	font-family: var(--font-family);
+	font-weight: bold;
 	width: 100%;
 	border-radius: 20px;
 	background-color: var(--secondary-color);
@@ -38,6 +40,8 @@
 }
 
 #moveToNextChallengeButton {
+	font-family: var(--font-family);
+	font-weight: bold;
 	width: 100%;
 	border-radius: 20px;
 }
