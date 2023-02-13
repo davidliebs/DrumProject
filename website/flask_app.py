@@ -7,6 +7,10 @@ import json
 app = Flask(__name__)
 app.secret_key = uuid.uuid4().hex
 
+@app.route("/user/")
+def user():
+	return render_template("user/index.html")
+
 @app.route("/user/home")
 def user_home():
 	if not session.get("userID", False):
@@ -97,4 +101,4 @@ def enroll_course():
 	
 	return redirect("/user/home")
 
-app.run(port=8888, debug=True)
+app.run(host="0.0.0.0", port=8888, debug=True)
