@@ -21,7 +21,7 @@ def user_home():
 	res = requests.get("http://localhost:5000/user/get_available_courses", params=params)
 	courses = res.json()
 
-	return render_template("user/home.html", courses=courses)
+	return render_template("user/user-home.html", courses=courses)
 
 @app.route("/user/signup", methods=["GET", "POST"])
 def user_signup():
