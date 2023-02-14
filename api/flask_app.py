@@ -51,7 +51,6 @@ def user_login():
 def get_available_courses():
 	userID = request.args.get("userID")
 
-	# SELECT courses.courseID, courses.courseName, courses.Descr  FROM coursesEnrolled WHERE userID = '{userID}'
 	cur.execute(f"""
 		SELECT * FROM courses WHERE courseID IN (SELECT courseID FROM coursesEnrolled WHERE userID = '{userID}');
 	""")
@@ -76,7 +75,7 @@ def request_music_notation_data():
 	courseID = request.args.get("courseID")
 	challengeID = request.args.get("challengeID")
 
-	cur.execute(f"SELECT musicData, svgIndexes FROM challenges WHERE courseID = '{courseID}' AND challengeID = '{challengeID}'")
+	cur.execute(f"SELECT musicData, svgIndexes, challengeTitle FROM challenges WHERE courseID = '{courseID}' AND challengeID = '{challengeID}'")
 	music_notation_data = cur.fetchone()
 
 	return jsonify(music_notation_data)
