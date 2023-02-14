@@ -3,9 +3,13 @@ import requests
 from io import BytesIO
 import uuid
 import json
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = uuid.uuid4().hex
+app.secret_key = os.getenv("app_secret_key")
 
 @app.route("/user/")
 def user():
