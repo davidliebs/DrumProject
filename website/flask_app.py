@@ -11,8 +11,18 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("app_secret_key")
 
+@app.route("/")
+def index():
+	if session.get("userID", False):
+		return redirect("/user/home")
+	
+	return redirect("/user/")
+
 @app.route("/user/")
 def user():
+	if session.get("userID", False):
+		return redirect("/user/home")
+
 	return render_template("user/index.html")
 
 @app.route("/user/home")
@@ -57,6 +67,12 @@ def user_login():
 	session["userID"] = res
 	
 	return redirect("/user/home")
+
+@app.route("/user/logout")
+def user_logout():
+	session.clear()
+
+	return redirect("/user/")
 
 @app.route("/user/challenge")
 def challenge():
