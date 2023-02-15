@@ -56,7 +56,7 @@ def user_login():
 	conn.close()
 
 	if returned_data == None:
-		return jsonify(returned_data[0])
+		return jsonify("Incorrect")
 
 	if bcrypt.checkpw(login_data["userPassword"].encode(), returned_data[1].encode()):
 		return jsonify(returned_data[0])
