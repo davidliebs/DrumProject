@@ -16,9 +16,11 @@ function resetSvg(svgPaths) {
 	}
 }
 
+let startDrumming = false;
 function playClick() {
 	if (metronomeCount == musicNotationData["timeSignatureNumerator"]) {
 		metronomeCount = 0;
+		startDrumming = true;
 	}
 	if (metronomeCount == 0) {
 		click1.play();
@@ -26,6 +28,13 @@ function playClick() {
 	} else {
 		click2.play();
 		click2.currentTime = 0;
+	}
+	if (!startDrumming) {
+		$("#metronomeDisplay").text(metronomeCount+1);
+		$("#metronomeDisplay").css("color", "gray")
+	} else {
+		$("#metronomeDisplay").css("color", "#ffffff")
+		$("#metronomeDisplay").text(metronomeCount+1);
 	}
 	metronomeCount++;
 }
@@ -96,6 +105,7 @@ $(window).on("load", function() {
 			metronome.stop();
 			$("#toggleMetronomeButton").text("Start");
 			musicNotation.restart();
+			startDrumming = false;
 		}
 	});
 
