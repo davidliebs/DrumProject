@@ -4,16 +4,19 @@ import os
 import uuid
 import bcrypt
 import mysql.connector
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
 def returnDBConnection():
 	conn = mysql.connector.connect(
-		user = "david",
-		password = "open1010",
-		database = "DrumApp",
-		host = "127.0.0.1",
-		port = 3306
+		user = os.getenv("db_user"),
+		password = os.getenv("db_password"),
+		database = os.getenv("db_database"),
+		host = os.getenv("db_host"),
+		port = int(os.getenv("db_port"))
 	)
 	cur = conn.cursor()
 
