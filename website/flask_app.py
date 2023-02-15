@@ -32,7 +32,7 @@ def user_home():
 	
 	# fetching courses to display from api
 	params = {"userID": session["userID"]}
-	res = requests.get("http://localhost:5000/user/get_available_courses", params=params)
+	res = requests.get(f"{os.getenv('api_base_url')}/user/get_available_courses", params=params)
 	courses = res.json()
 
 	return render_template("user/home.html", courses=courses)
@@ -46,7 +46,7 @@ def user_signup():
 	user_pwd = request.form["userPassword"]
 
 	data = {"userEmail": user_email, "userPassword": user_pwd}
-	res = requests.post("http://localhost:5000/user/signup", json=data)
+	res = requests.post(f"{os.getenv('api_base_url')}/user/signup", json=data)
 
 	return redirect("/user/login")
 
@@ -59,7 +59,7 @@ def user_login():
 	user_pwd = request.form["userPassword"]
 
 	data = {"userEmail": user_email, "userPassword": user_pwd}
-	res = requests.post("http://localhost:5000/user/login", json=data).json()
+	res = requests.post(f"{os.getenv('api_base_url')}/user/login", json=data).json()
 
 	if res == "Incorrect":
 		return redirect("/user/login")
@@ -81,10 +81,10 @@ def challenge():
 
 	# fetching required data from api
 	params = {"courseID": session["courseID"], "challengeID": session["challengeID"]}
-	res = requests.get("http://localhost:5000/user/request_music_notation_data", params=params)
+	res = requests.get(f"{os.getenv('api_base_url')}/user/request_music_notation_data", params=params)
 	music_notation_data, svg_indexes, challengeTitle, challengeMessage = res.json()
 
-	res = requests.get("http://localhost:5000/user/request_midi_notes_to_drum_name")
+	res = requests.get(f"{os.getenv('api_base_url')}/user/request_midi_notes_to_drum_name")
 	midi_notes_to_drum_name = res.json()
 
 	return render_template("user/challenge.html", courseID=session["courseID"], challengeID=session["challengeID"], music_notation_data=music_notation_data, midi_notes_to_drum_name=midi_notes_to_drum_name, svg_indexes=svg_indexes, challengeTitle=challengeTitle, challengeMessage=challengeMessage)
@@ -92,7 +92,7 @@ def challenge():
 @app.route("/user/fetch_challenge_svg")
 def fetch_challenge_svg():
 	params = {"courseID": session["courseID"], "challengeID": session["challengeID"]}
-	res = requests.get("http://127.0.0.1:5000/user/serve_challenge_svg", params=params)
+	res = requests.get(f"{os.getenv('api_base_url')}/user/serve_challenge_svg", params=params)
 
 	file_obj = BytesIO(res.content)
 	return send_file(file_obj, download_name="file.svg")
@@ -105,7 +105,7 @@ def next_challenge():
 	session["courseID"] = courseID
 
 	params = {"courseID": courseID, "challengeID": challengeID}
-	res = requests.get("http://127.0.0.1:5000/user/get_next_challengeID", params=params)
+	res = requests.get(f"{os.getenv('api_base_url')}/user/get_next_challengeID", params=params)
 
 	session["challengeID"] = res.json()
 
@@ -117,7 +117,7 @@ def enroll_course():
 	courseID = request.args.get("courseID")
 
 	params = {"userID": userID, "courseID": courseID}
-	res = requests.get("http://127.0.0.1:5000/user/enroll_course", params=params)
+	res = requests.get(f"{os.getenv('api_base_url')}/user/enroll_course", params=params)
 	
 	return redirect("/user/home")
 
