@@ -7,17 +7,22 @@ import mysql.connector
 
 app = Flask(__name__)
 
-conn = mysql.connector.connect(
-	user = "david",
-	password = "open1010",
-	database = "DrumApp",
-	host = "127.0.0.1",
-	port = 3306
-)
-cur = conn.cursor()
+def returnDBConnection():
+	conn = mysql.connector.connect(
+		user = "david",
+		password = "open1010",
+		database = "DrumApp",
+		host = "127.0.0.1",
+		port = 3306
+	)
+	cur = conn.cursor()
+
+	return conn, cur
 
 @app.route("/user/signup", methods=["POST"])
 def user_signup():
+	conn, cur = returnDBConnection()
+
 	signup_data = request.json
 
 	userID = str(uuid.uuid4())
@@ -29,11 +34,14 @@ def user_signup():
 	""")
 
 	conn.commit()
+	conn.close()
 
 	return jsonify(userID)
 
 @app.route("/user/login", methods=["POST"])
 def user_login():
+	conn, cur = returnDBConnection()
+
 	login_data = request.json
 
 	cur.execute(f"""
@@ -42,6 +50,8 @@ def user_login():
 	""")
 	returned_data = cur.fetchone()
 
+	conn.close()
+
 	if bcrypt.checkpw(login_data["userPassword"], returned_data[1]):
 		return jsonify(returned_data[0])
 	else:
@@ -49,6 +59,8 @@ def user_login():
 
 @app.route("/user/get_available_courses")
 def get_available_courses():
+	conn, cur = returnDBConnection()
+
 	userID = request.args.get("userID")
 
 	cur.execute(f"""
@@ -68,30 +80,42 @@ def get_available_courses():
 		"other courses": other_courses
 	}
 
+	conn.close()
+
 	return jsonify(data_to_return)
 
 @app.route("/user/request_music_notation_data")
 def request_music_notation_data():
+	conn, cur = returnDBConnection()
+
 	courseID = request.args.get("courseID")
 	challengeID = request.args.get("challengeID")
 
-	cur.execute(f"SELECT musicData, svgIndexes, challengeTitle FROM challenges WHERE courseID = '{courseID}' AND challengeID = '{challengeID}'")
+	cur.execute(f"SELECT musicData, svgIndexes, challengeTitle, challengeMessage FROM challenges WHERE courseID = '{courseID}' AND challengeID = '{challengeID}'")
 	music_notation_data = cur.fetchone()
+
+	conn.close()
 
 	return jsonify(music_notation_data)
 
 @app.route("/user/serve_challenge_svg")
 def serve_challenge_svg():
+	conn, cur = returnDBConnection()
+
 	courseID = request.args.get("courseID")
 	challengeID = request.args.get("challengeID")
 
 	cur.execute(f"SELECT challengeSvgFilePath FROM challenges WHERE courseID='{courseID}' AND challengeID='{challengeID}'")
 	challenge_svg_filepath = cur.fetchone()[0]
 
+	conn.close()
+
 	return send_from_directory(challenge_svg_filepath.replace(os.path.basename(challenge_svg_filepath), ""), os.path.basename(challenge_svg_filepath))
 
 @app.route("/user/get_next_challengeID")
 def get_next_challenge_id():
+	conn, cur = returnDBConnection()
+
 	courseID = request.args.get("courseID")
 	challengeID = request.args.get("challengeID")
 
@@ -104,6 +128,8 @@ def get_next_challenge_id():
 		cur.execute(f"SELECT challengeID FROM challenges WHERE courseID = '{courseID}' AND challengeNo = {challenge_no+1}")
 		nextChallengeID = cur.fetchone()
 
+	conn.close()
+
 	if nextChallengeID == None:
 		return jsonify("Finished")
 
@@ -111,6 +137,8 @@ def get_next_challenge_id():
 
 @app.route("/user/enroll_course")
 def enroll_course():
+	conn, cur = returnDBConnection()
+
 	userID = request.args.get("userID")
 	courseID = request.args.get("courseID")
 
@@ -120,6 +148,7 @@ def enroll_course():
 	""")
 
 	conn.commit()
+	conn.close()
 
 	return "Success"
 
