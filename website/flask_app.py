@@ -82,17 +82,25 @@ def challenge():
 	# fetching required data from api
 	params = {"courseID": session["courseID"], "challengeID": session["challengeID"]}
 	res = requests.get(f"{os.getenv('api_base_url')}/user/request_music_notation_data", params=params)
-	music_notation_data, svg_indexes, challengeTitle, challengeMessage = res.json()
+	music_notation_data, svg_indexes, challengeTitle, challengeMessage, challengeSvgURL = res.json()
 
 	res = requests.get(f"{os.getenv('api_base_url')}/user/request_midi_notes_to_drum_name")
 	midi_notes_to_drum_name = res.json()
 
-	return render_template("user/challenge.html", courseID=session["courseID"], challengeID=session["challengeID"], music_notation_data=music_notation_data, midi_notes_to_drum_name=midi_notes_to_drum_name, svg_indexes=svg_indexes, challengeTitle=challengeTitle, challengeMessage=challengeMessage)
+	return render_template("user/challenge.html",
+						   courseID=session["courseID"],
+						   challengeID=session["challengeID"],
+						   music_notation_data=music_notation_data,
+						   midi_notes_to_drum_name=midi_notes_to_drum_name,
+						   svg_indexes=svg_indexes,
+						   challengeTitle=challengeTitle,
+						   challengeMessage=challengeMessage,
+						   challengeSvgURL=challengeSvgURL
+	)
 
 @app.route("/user/fetch_challenge_svg")
 def fetch_challenge_svg():
-	params = {"courseID": session["courseID"], "challengeID": session["challengeID"]}
-	res = requests.get(f"{os.getenv('api_base_url')}/user/serve_challenge_svg", params=params)
+	res = requests.get(request.args.get("challengeSvgURL"))
 
 	file_obj = BytesIO(res.content)
 	return send_file(file_obj, download_name="file.svg")

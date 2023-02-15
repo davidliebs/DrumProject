@@ -97,26 +97,12 @@ def request_music_notation_data():
 	courseID = request.args.get("courseID")
 	challengeID = request.args.get("challengeID")
 
-	cur.execute(f"SELECT musicData, svgIndexes, challengeTitle, challengeMessage FROM challenges WHERE courseID = '{courseID}' AND challengeID = '{challengeID}'")
+	cur.execute(f"SELECT musicData, svgIndexes, challengeTitle, challengeMessage, challengeSvgURL FROM challenges WHERE courseID = '{courseID}' AND challengeID = '{challengeID}'")
 	music_notation_data = cur.fetchone()
 
 	conn.close()
 
 	return jsonify(music_notation_data)
-
-@app.route("/user/serve_challenge_svg")
-def serve_challenge_svg():
-	conn, cur = returnDBConnection()
-
-	courseID = request.args.get("courseID")
-	challengeID = request.args.get("challengeID")
-
-	cur.execute(f"SELECT challengeSvgFilePath FROM challenges WHERE courseID='{courseID}' AND challengeID='{challengeID}'")
-	challenge_svg_filepath = cur.fetchone()[0]
-
-	conn.close()
-
-	return send_from_directory(challenge_svg_filepath.replace(os.path.basename(challenge_svg_filepath), ""), os.path.basename(challenge_svg_filepath))
 
 @app.route("/user/get_next_challengeID")
 def get_next_challenge_id():
@@ -174,5 +160,23 @@ def request_midi_notes_to_drum_name():
 	}
 
 	return jsonify(data)
+
+@app.route("/creator/create_course_entry", methods=["POST"])
+def create_course_entry():
+	conn, cur = returnDBConnection()
+	
+	data = request.json
+
+	course_id = str(uuid.uuid4())
+
+	cur.execute(f"""
+		INSERT INTO courses
+		VALUES ('{course_id}', '{data["courseName"]}', '{data["courseDescription"]}', '{data["courseNoChallenges"]}')
+	""")
+
+	conn.commit()
+	conn.close()
+
+	return course_id
 
 app.run(port=5000, debug=True)
