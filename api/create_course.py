@@ -36,12 +36,18 @@ class Course:
 
 			fileURL = blob_storage_library.uploadFileToBucket(b2_api, bucket, row["svgFilepath"], challenge_id+".svg")
 
-			cur.execute(f"""
-				INSERT INTO challenges
-				VALUES ('{challenge_id}', '{self.course_id}', '{music_data}', '{svg_indexes}', '{row["challengeNo"]}', '{fileURL}', '{row["challengeTitle"]}', '{row["challengeMessage"]}')
-			""")
-		
-			conn.commit()
+			data = {
+				"challengeID": challenge_id,
+				"courseID": self.course_id,
+				"musicData": music_data,
+				"svgIndexes": svg_indexes,
+				"challengeNo": row["challengeNo"],
+				"svgURL": fileURL,
+				"challengeTitle": row["challengeTitle"],
+				"challengeMessage": row["challengeMessage"]
+			}
+
+			res = requests.post(f"{os.getenv('api_base_url')}/creator/create_challenge_entry", json=data)
 
 course = Course("/home/david/Desktop/BeatBuddy/Courses/Beginner Rock Course/course.csv", 
 				"Rock course", "Get started with beatbuddys very own rock course!", 

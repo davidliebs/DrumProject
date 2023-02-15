@@ -179,4 +179,20 @@ def create_course_entry():
 
 	return course_id
 
+@app.route("/creator/create_challenge_entry", methods=["POST"])
+def create_challenge_entry():
+	conn, cur = returnDBConnection()
+	
+	data = request.json
+
+	cur.execute(f"""
+		INSERT INTO challenges
+		VALUES ('{data["challengeID"]}', '{data["courseID"]}', '{data["musicData"]}', '{data["svgIndexes"]}', '{data["challengeNo"]}', '{data["svgURL"]}', '{data["challengeTitle"]}', '{data["challengeMessage"]}')
+	""")
+
+	conn.commit()
+	conn.close()
+
+	return data["challengeID"]
+
 app.run(port=5000, debug=True)
