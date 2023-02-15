@@ -29,7 +29,7 @@ def user_signup():
 	signup_data = request.json
 
 	userID = str(uuid.uuid4())
-	hashed_password = bcrypt.hashpw(signup_data["userPassword"], bcrypt.gensalt())
+	hashed_password = bcrypt.hashpw(signup_data["userPassword"].encode(), bcrypt.gensalt())
 
 	cur.execute(f"""
 		INSERT INTO users
