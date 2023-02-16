@@ -154,6 +154,8 @@ def calibrate_drum_kit():
 	cur.execute(f"""
 		INSERT INTO userDrumKits
 		VALUES ('{data['userID']}', '{json.dumps(data['drumKitData'])}')
+		ON DUPLICATE KEY UPDATE
+		midiNotesToDrumName='{json.dumps(data['drumKitData'])}'
 	""")
 
 	conn.commit()

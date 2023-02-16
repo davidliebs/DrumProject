@@ -20,11 +20,19 @@
                     </svg></span><span>BeatBuddy</span></a></div>
     </nav>
     <div class="container-fluid">
+		{% if drum_kit_exists %}
+        <div class="row mt-5">
+            <div class="col">
+                <h1 class="text-center" id="calibrationHeading">You have already calibrated a drum kit</h1>
+            </div>
+        </div>
+		{% else %}
         <div class="row mt-5">
             <div class="col">
                 <h1 class="text-center" id="calibrationHeading">It looks like you haven&#39;t calibrated a drum kit?</h1>
             </div>
         </div>
+		{% endif %}
         <div class="row mt-2">
             <div class="col-xl-12 offset-xl-0" style="text-align: center;"><button class="btn btn-primary" type="button" id="addDrumKitButton">Add drum kit</button></div>
         </div>

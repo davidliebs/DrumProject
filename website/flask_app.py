@@ -156,6 +156,16 @@ def calibrate():
 				("ride", "ride", "ride")
 	]
 
+	if request.method == "GET":	
+		res = requests.get(f"{os.getenv('api_base_url')}/user/request_midi_notes_to_drum_name", params={"userID": session["userID"]})
+		midi_notes_to_drum_name = res.json()
+
+		drum_kit_exists=True
+		if midi_notes_to_drum_name == "no drum kits":
+			drum_kit_exists=False
+		
+		return render_template("user/calibrate.html", drums=drums, drum_kit_exists=drum_kit_exists)
+
 	if request.method == "POST":
 		drum_kit_data = {}
 
@@ -166,7 +176,5 @@ def calibrate():
 		res = requests.post(f"{os.getenv('api_base_url')}/user/calibrate_drum_kit", json=data)
 
 		return redirect("/user/home")
-
-	return render_template("user/calibrate.html", drums=drums)
 
 app.run(host="0.0.0.0", port=8888, debug=True)
