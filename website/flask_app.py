@@ -76,6 +76,9 @@ def user_logout():
 
 @app.route("/user/challenge")
 def challenge():
+	if not session.get("userID", False):
+		return redirect("/user/login")
+
 	if session["challengeID"] == "Finished":
 		return redirect("/user/home")
 
@@ -84,8 +87,11 @@ def challenge():
 	res = requests.get(f"{os.getenv('api_base_url')}/user/request_music_notation_data", params=params)
 	music_notation_data, svg_indexes, challengeTitle, challengeMessage, challengeSvgURL = res.json()
 
-	res = requests.get(f"{os.getenv('api_base_url')}/user/request_midi_notes_to_drum_name")
+	res = requests.get(f"{os.getenv('api_base_url')}/user/request_midi_notes_to_drum_name", params={"userID": session["userID"]})
 	midi_notes_to_drum_name = res.json()
+
+	if midi_notes_to_drum_name == "no drum kits":
+		return redirect("/user/calibrate")
 
 	return render_template("user/challenge.html",
 						   courseID=session["courseID"],
@@ -107,6 +113,9 @@ def fetch_challenge_svg():
 
 @app.route("/user/next_challenge")
 def next_challenge():
+	if not session.get("userID", False):
+		return redirect("/user/login")
+
 	courseID = request.args.get("courseID")
 	challengeID = request.args.get("challengeID")
 
@@ -128,5 +137,36 @@ def enroll_course():
 	res = requests.get(f"{os.getenv('api_base_url')}/user/enroll_course", params=params)
 	
 	return redirect("/user/home")
+
+@app.route("/user/calibrate", methods=["GET", "POST"])
+def calibrate():
+	if not session.get("userID", False):
+		return redirect("/user/login")
+
+	drums = [
+				("snare", "snare", "snare"),
+				("high tom", "high-tom", "high-tom"),
+				("mid tom", "mid-tom", "mid-tom"),
+				("floor tom", "floor-tom", "floor-tom"),
+				("bass drum", "bass-drum", "bass-drum"),
+				("hi-hat (closed)", "hh-closed", "closed hi-hat"),
+				("hi-hat(open)", "hh-open", "open hi-hat"),
+				("crash (1)", "crash-1", "crash"),
+				("crash (2)", "crash-2", "crash"),
+				("ride", "ride", "ride")
+	]
+
+	if request.method == "POST":
+		drum_kit_data = {}
+
+		for i in drums:
+			drum_kit_data[int(request.form[i[1]])] = i[2]
+		
+		data = {"userID": session["userID"], "drumKitData": drum_kit_data}
+		res = requests.post(f"{os.getenv('api_base_url')}/user/calibrate_drum_kit", json=data)
+
+		return redirect("/user/home")
+
+	return render_template("user/calibrate.html", drums=drums)
 
 app.run(host="0.0.0.0", port=8888, debug=True)
