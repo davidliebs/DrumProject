@@ -68,10 +68,17 @@ $(window).on("load", function() {
 			const dataForSvg = musicNotation.updateMusic(Date.now(), midiData.data);
 
 			if (dataForSvg) {
-				const indexesToUpdate = dataForSvg[0];
-				const colour = dataForSvg[1];
-				for (let x = 0; x < indexesToUpdate.length; x++) {
-					changeColorOfIndex(svgPaths, indexesToUpdate[x], colour);
+				for (let x=0; x < dataForSvg.length; x++) {
+					let indexesToUpdate = dataForSvg[x][0];
+					let svgColour = dataForSvg[x][1];
+
+					if (indexesToUpdate) {
+						if (indexesToUpdate[0] < svgPaths.length) {
+							for (let y = 0; y < indexesToUpdate.length; y++) {
+								changeColorOfIndex(svgPaths, indexesToUpdate[y], svgColour);
+							}
+						}
+					}
 				}
 			}
 
@@ -99,7 +106,11 @@ $(window).on("load", function() {
 			musicNotation.start(Date.now());
 			resetSvg(svgPaths);
 			$("#toggleMetronomeButton").text("Stop");
-		
+
+			for (let x = 0; x < svgIndexes[0].length; x++) {
+				changeColorOfIndex(svgPaths, svgIndexes[0][x], "#3763f4");
+			}
+
 		// stopping metronome
 		} else {
 			metronome.stop();

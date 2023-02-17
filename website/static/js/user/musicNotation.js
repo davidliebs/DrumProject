@@ -52,7 +52,8 @@ class Music{
 		if (timeDelay > 300) {
 			// update svg orange
 			this.challenge_played_correctly = false;
-			return [svgElementIndexes, "orange"];
+			return [[svgElementIndexes, "orange"], [this.svgIndexes[index+1], "#3763f4"]];
+
 		}
 
 		// update svg red
@@ -60,11 +61,11 @@ class Music{
 
 		if (JSON.stringify(drums_hit) != JSON.stringify(this.music_data[index]["notes"].sort())) {
 			this.challenge_played_correctly = false;
-			return [svgElementIndexes, "red"]
+			return [[svgElementIndexes, "red"], [this.svgIndexes[index+1], "#3763f4"]];
 		}
 
 		// update svg green
-		return [svgElementIndexes, "#23CE6B"];
+		return [[svgElementIndexes, "#23CE6B"], [this.svgIndexes[index+1], "#3763f4"]];
 	}
 
 	restart() {
