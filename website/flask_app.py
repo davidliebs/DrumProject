@@ -4,6 +4,7 @@ from io import BytesIO
 import uuid
 import json
 import os
+import stripe
 from dotenv import load_dotenv
 
 load_dotenv()
