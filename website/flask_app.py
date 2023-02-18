@@ -36,6 +36,10 @@ def user_home():
 	if not session.get("userID", False):
 		return redirect("/user/login")
 	
+	message = ""
+	if request.args.get("limit_message", False):
+		message = "The number of courses you have enrolled to has reached its limit, upgrade your plan so you can enroll to more"
+
 	# fetching user paid status
 	params = {"userID": session["userID"]}
 
@@ -46,7 +50,7 @@ def user_home():
 	res = requests.get(f"{os.getenv('api_base_url')}/user/get_available_courses", params=params)
 	courses = res.json()
 
-	return render_template("user/home.html", courses=courses, userPaid=session["userPaid"])
+	return render_template("user/home.html", courses=courses, userPaid=session["userPaid"], message=message)
 
 @app.route("/user/signup", methods=["GET", "POST"])
 def user_signup():
@@ -144,8 +148,11 @@ def enroll_course():
 	userID = session["userID"]
 	courseID = request.args.get("courseID")
 
-	params = {"userID": userID, "courseID": courseID}
+	params = {"userID": userID, "courseID": courseID, "userPaid": session["userPaid"]}
 	res = requests.get(f"{os.getenv('api_base_url')}/user/enroll_course", params=params)
+
+	if res.json() == "Limit reached":
+		return redirect("/user/home?limit_message=1")
 	
 	return redirect("/user/home")
 

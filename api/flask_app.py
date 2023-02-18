@@ -158,6 +158,16 @@ def enroll_course():
 
 	userID = request.args.get("userID")
 	courseID = request.args.get("courseID")
+	userPaid = request.args.get("userPaid")
+
+	if userPaid == "0":
+		cur.execute(f"SELECT courseID FROM coursesEnrolled WHERE userID='{userID}'")
+		numberCoursesEnrolled = len(cur.fetchall())
+
+		if numberCoursesEnrolled >= int(os.getenv("num_courses_allowed_on_free_plan")):
+			conn.close()
+
+			return jsonify("Limit reached")
 
 	cur.execute(f"""
 		INSERT INTO coursesEnrolled
@@ -167,8 +177,7 @@ def enroll_course():
 	conn.commit()
 	conn.close()
 
-	return "Success"
-
+	return jsonify("Success")
 
 @app.route("/user/calibrate_drum_kit", methods=["POST"])
 def calibrate_drum_kit():

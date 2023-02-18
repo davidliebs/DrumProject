@@ -6,8 +6,10 @@
 	<title>home</title>
 	<meta name="description" content="The most interactive way to drum">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/user/bootstrap.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/user/jquery-msgpopup.css') }}">
 	<link rel="stylesheet" href="https://cdn.reflowhq.com/v2/toolkit.min.css">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&amp;display=swap">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/user/jquery-msgpopup.js') }}"></script>
 </head>
 
 <body style="background: #27262e;">
@@ -86,9 +88,16 @@
 
 	<script>
 		var userPaid = {{userPaid}};
+		var message = '{{message}}';
 
 		if (userPaid === 0) {
 			document.querySelector("#paymentButton").style.display = "initial";
+		}
+
+		if (message != "") {
+			$().msgpopup({
+				text: message
+			});
 		}
 	</script>
 </body>
