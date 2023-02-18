@@ -36,12 +36,17 @@ def user_home():
 	if not session.get("userID", False):
 		return redirect("/user/login")
 	
-	# fetching courses to display from api
+	# fetching user paid status
 	params = {"userID": session["userID"]}
+
+	res = requests.get(f"{os.getenv('api_base_url')}/user/get_paid_status", params=params)
+	session["userPaid"] = res.json()
+	
+	# fetching courses to display from api
 	res = requests.get(f"{os.getenv('api_base_url')}/user/get_available_courses", params=params)
 	courses = res.json()
 
-	return render_template("user/home.html", courses=courses)
+	return render_template("user/home.html", courses=courses, userPaid=session["userPaid"])
 
 @app.route("/user/signup", methods=["GET", "POST"])
 def user_signup():
@@ -70,8 +75,8 @@ def user_login():
 	if res == "Incorrect":
 		return redirect("/user/login")
 
-	session["userID"] = res
-	
+	session["userID"] = res["userID"]
+
 	return redirect("/user/home")
 
 @app.route("/user/logout")

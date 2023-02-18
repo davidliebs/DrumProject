@@ -16,7 +16,10 @@
 		<div class="container">
 			<a class="navbar-brand d-flex align-items-center" href="/user/"><img src="{{ url_for('static', filename='media/beatbuddy.svg') }}" style="width: 237px;" /></a>
 			<div id="navcol-1" class="collapse navbar-collapse">
-				<ul class="navbar-nav mx-auto"></ul><a class="btn btn-primary" role="button" style="background: transparent;border-color: transparent;" href="/user/calibrate">Calibrate drum kit</a><a class="btn btn-primary" role="button" style="background: transparent;border-color: transparent;" href="/user/logout">Log out</a>
+				<ul class="navbar-nav mx-auto"></ul>
+				<a class="btn btn-primary" role="button" style="background: transparent;border-color: transparent;" href="/user/calibrate">Calibrate drum kit</a>
+				<a class="btn btn-primary" role="button" style="background: transparent;border-color: transparent;" href="/user/logout">Log out</a>
+				<a style="display: none;" class="btn btn-primary" role="button" style="background: var(--bs-btn-bg);border-color: transparent;" href="/user/payment" id="paymentButton">Upgrade</a>
 			</div>
 		</div>
 	</nav>
@@ -79,7 +82,15 @@
     </section><!-- End: available courses -->
 	
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src rel="{{ url_for('static', filename='js/user/bold-and-dark.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/user/bold-and-dark.js') }}"></script>
+
+	<script>
+		var userPaid = {{userPaid}};
+
+		if (userPaid === 0) {
+			document.querySelector("#paymentButton").style.display = "initial";
+		}
+	</script>
 </body>
 
 </html>

@@ -42,7 +42,7 @@ def user_signup():
 
 	cur.execute(f"""
 		INSERT INTO users
-		VALUES ('{userID}', '{signup_data["userEmail"]}', '{hashed_password}')
+		VALUES ('{userID}', '{signup_data["userEmail"]}', '{hashed_password}', 0)
 	""")
 
 	conn.commit()
@@ -68,9 +68,25 @@ def user_login():
 		return jsonify("Incorrect")
 
 	if bcrypt.checkpw(login_data["userPassword"].encode(), returned_data[1].encode()):
-		return jsonify(returned_data[0])
+		return jsonify({"userID": returned_data[0]})
 	else:
 		return jsonify("Incorrect")
+
+@app.route("/user/get_paid_status", methods=["GET"])
+def get_paid_status():
+	conn, cur = returnDBConnection()
+
+	userID = request.args.get("userID")
+
+	cur.execute(f"""
+		SELECT userPaid FROM users WHERE userID = '{userID}'
+	""")
+
+	userPaidStatus = cur.fetchone()[0]
+
+	conn.close()
+
+	return jsonify(userPaidStatus)
 
 @app.route("/user/get_available_courses")
 def get_available_courses():
