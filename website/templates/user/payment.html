@@ -1,0 +1,28 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+		<title>BeatBuddy</title>
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/user/bootstrap.min.css') }}">
+		<script src="https://js.stripe.com/v3/"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+		<script src="{{url_for('static', filename='js/user/payment.js')}}"></script>
+	</head>
+	
+	<body style="background: #27262e;">
+		<!-- Start: Header Light -->
+		<nav id="mainNav" class="navbar navbar-dark navbar-expand-md sticky-top navbar-shrink py-3">
+			<div class="container">
+				<a class="navbar-brand d-flex align-items-center" href="/user/"><img src="{{ url_for('static', filename='media/beatbuddy.svg') }}" style="width: 237px;" /></a>
+			</div>
+		</nav>
+
+		<div class="container">
+			<div class="row">
+				<div class="col-12 mt-5" style="text-align: center">
+					<button class="btn btn-primary" id="continuePaymentButton">Continue</button>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

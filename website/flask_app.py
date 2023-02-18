@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, session, request, send_file, redirect
+from flask import Flask, render_template, url_for, session, request, send_file, redirect, jsonify
 import requests
 from io import BytesIO
 import uuid
@@ -11,6 +11,11 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("app_secret_key")
+
+stripe_keys = {
+	"public_key": os.getenv("stripe_publishable_key"),
+	"secret_key": os.getenv("stripe_secret_key")
+}
 
 @app.route("/")
 def index():
@@ -178,4 +183,46 @@ def calibrate():
 
 		return redirect("/user/home")
 
-app.run(host="0.0.0.0", port=8888, debug=True)
+@app.route("/user/payment")
+def payment():
+	if not session.get("userID", False):
+		return redirect("/user/login")
+	
+	return render_template("user/payment.html")
+
+@app.route("/user/payment/config")
+def payment_config():
+	return jsonify({"public_key": stripe_keys["public_key"]})
+
+@app.route("/user/payment/create-checkout-session")
+def create_checkout_session():
+	if not session.get("userID", False):
+		return redirect("/user/login")
+
+	domain_url = "http://127.0.0.1:8888/"
+	stripe.api_key = stripe_keys["secret_key"]
+
+	try:
+		checkout_session = stripe.checkout.Session.create(
+			success_url=domain_url + "user/payment/success?session_id={CHECKOUT_SESSION_ID}",
+			cancel_url=domain_url,
+			payment_method_types=["card"],
+			mode="subscription",
+			line_items=[
+				{
+					"price": "price_1McoKrIe9NIvPil7UyC1v8ed",
+					"quantity": 1
+				}
+			],
+			client_reference_id=session["userID"]
+		)
+		return jsonify({"sessionId": checkout_session["id"]})
+
+	except Exception as e:
+		return jsonify(error=str(e))
+
+@app.route("/user/payment/success")
+def payment_success():
+	return render_template("user/payment-success.html")
+
+app.run(port=8888, debug=True)
