@@ -24,63 +24,41 @@
 		</div>
 	</nav>
 
-    <header class="bg-dark">
-        <!-- Start: Hero Clean Reverse -->
-        <div class="container pt-4 pt-xl-5">
-            <div class="row pt-5">
-                <div class="col-md-8 col-xl-6 text-center text-md-start mx-auto">
-                    <div class="text-center">
-                        <h1 class="fw-bold">The most&nbsp;<span style="color: #3763f4;">interactive</span> way to drum</h1>
-                    </div>
-                </div>
-                <div class="col-12 col-lg-10 mx-auto">
-                    <div class="position-relative" style="display: flex;flex-wrap: wrap;justify-content: flex-end;">
-                        <div style="position: relative;flex: 0 0 45%;transform: translate3d(-15%, 35%, 0);"><img class="img-fluid" data-bss-parallax="" data-bss-parallax-speed="0.8" src="{{ url_for('static', filename='media/3.jpg') }}"></div>
-                        <div style="position: relative;flex: 0 0 45%;transform: translate3d(-5%, 20%, 0);"><img class="img-fluid" data-bss-parallax="" data-bss-parallax-speed="0.4" src="{{ url_for('static', filename='media/2.jpg') }}"></div>
-                        <div style="position: relative;flex: 0 0 60%;transform: translate3d(0, 0%, 0);"><img class="img-fluid" data-bss-parallax="" data-bss-parallax-speed="0.25" src="{{ url_for('static', filename='media/1.jpg') }}"></div>
-                    </div>
-                </div>
-            </div>
-        </div><!-- End: Hero Clean Reverse -->
-    </header><!-- Start: Features -->
-    <section id="features" class="pt-3 mt-3">
-        <!-- Start: Features Cards -->
-        <div class="container py-5">
-            <div class="row mb-5">
-                <div class="col-md-8 col-xl-6 text-center mx-auto">
-                    <h2 class="fw-bold">Features</h2>
-                </div>
-            </div>
-            <div class="mx-auto" style="max-width: 900px;">
-                <div class="row row-cols-1 row-cols-md-2 d-flex justify-content-center">
-                    <div class="col mb-4">
-                        <div class="card bg-primary-light">
-                            <div class="card-body text-center px-4 py-5 px-md-5">
-                                <p class="fw-bold text-primary card-text mb-2">Interactive</p>
-                                <h5 class="fw-bold card-title mb-3">Live feedback as you play each challenge</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col mb-4">
-                        <div class="card bg-secondary-light">
-                            <div class="card-body text-center px-4 py-5 px-md-5">
-                                <p class="fw-bold text-secondary card-text mb-2">Structure</p>
-                                <h5 class="fw-bold card-title mb-3">Each course provides structure to your learning, taking you from playing simple to intricate grooves</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col mb-4">
-                        <div class="card bg-info-light">
-                            <div class="card-body text-center px-4 py-5 px-md-5">
-                                <p class="fw-bold text-info card-text mb-2">Courses</p>
-                                <h5 class="fw-bold card-title mb-3">Explore our courses ranging from jazz to heavy metal</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div><!-- End: Features Cards -->
-    </section><!-- End: Features -->
+	<section class="mt-5">
+		<div class="row mb-5" style="margin-right: 0px;margin-left: 0px;">
+			<div class="col-md-8 col-xl-6 text-center mx-auto">
+				<h2 class="fw-bold">How to get started?</h2>
+			</div>
+		</div>
+		<div class="row" style="margin-right: 0px;margin-left: 0px;">
+			<div class="col-lg-8 offset-lg-2 mb-3">
+				<h1 style="text-align: left;font-size: 24.74px;"><strong>Calibrate your electric drum kit</strong></h1>
+				<h1 style="font-size: 23.74px;text-align: left;color: rgb(164,164,164);">Simply follow the instructions and link your kit to BeatBuddy. Yes, its that easy!</h1>
+			</div>
+		</div>
+		<div class="row" style="margin-right: 0px;margin-left: 0px;">
+			<div class="col-lg-6 offset-lg-3" style="text-align: center;"><img src="{{url_for('static', filename='media/calibration.png')}}" style="border-radius: 32px;width: 100%;height: 100%;" width="691" height="354" /></div>
+		</div>
+		<div class="row mt-5" style="margin-right: 0px;margin-left: 0px;">
+			<div class="col-lg-8 offset-lg-2 mb-3">
+				<h1 style="text-align: left;font-size: 24.74px;"><strong>Enroll in a course</strong></h1>
+				<h1 style="font-size: 23.74px;text-align: left;color: rgb(164,164,164);">Search through courses from beginner to advanced, jazz to rock. Whatever your level of skill or preferred genre, BeatBuddy has you covered.</h1>
+			</div>
+		</div>
+		<div class="row" style="margin-right: 0px;margin-left: 0px;">
+			<div class="col-lg-6 offset-lg-3" style="text-align: center;"><img src="{{url_for('static', filename='media/course.png')}}" style="border-radius: 32px;width: 100%;height: 100%;" width="691" height="414" /></div>
+		</div>
+		<div class="row mt-5" style="margin-right: 0px;margin-left: 0px;">
+			<div class="col-lg-8 offset-lg-2 mb-3">
+				<h1 style="text-align: left;font-size: 24.74px;"><strong>Play through the challenges...</strong></h1>
+				<h1 style="font-size: 23.74px;text-align: left;color: rgb(164,164,164);">Analyse where you went out of time with BeatBuddy&#39;s real time feedback. Move to the next challenge once you played the music correctly.</h1>
+			</div>
+		</div>
+		<div class="row" style="margin-right: 0px;margin-left: 0px;">
+			<div class="col-lg-6 offset-lg-3" style="text-align: center;"><img src="{{url_for('static', filename='media/challenge.png')}}" style="border-radius: 32px;width: 100%;height: 100%;" width="691" height="414" /></div>
+		</div>
+	</section>
+
     <!-- Start: Pricing -->
     <section id="pricing" class="pt-3 mt-3">
         <!-- Start: Pricing Duo -->
