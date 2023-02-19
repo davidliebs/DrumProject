@@ -2,9 +2,9 @@ import Timer from './timer.js';
 import Music from './musicNotation.js';
 
 var metronomeCount = 0;
-const click1 = new Audio('/static/media/click1.mp3');
-const click2 = new Audio('/static/media/click2.mp3');
-const successSound = new Audio('/static/media/success-sound.mp3')
+const click1 = new Audio('/static/media/challenge-files/click1.mp3');
+const click2 = new Audio('/static/media/challenge-files/click2.mp3');
+const successSound = new Audio('/static/media/challenge-files/success-sound.mp3')
 
 function changeColorOfIndex(svgPaths, index, colorToChangeTo) {
 	svgPaths[index].setAttribute("fill", colorToChangeTo);

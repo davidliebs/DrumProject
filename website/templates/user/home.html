@@ -25,7 +25,7 @@
 			</div>
 		</div>
 	</nav>
-	<!-- Start: user courses -->
+
 	<section class="pt-3 mt-3">
 		<div class="container py-5">
 			<div class="row mb-5">
@@ -33,28 +33,20 @@
 					<h2 class="fw-bold">My Courses</h2>
 				</div>
 			</div>
-			<div data-reflow-type="product-list" data-reflow-order="date_desc" data-reflow-perpage="2">
-				<div class="reflow-product-list">
-					<div class="ref-products">
-						{% for course in courses["courses enrolled"] %}
-							<div class="ref-product">
-								<div class="ref-media"><img class="ref-image" src="https://cdn.bootstrapstudio.io/products/product-30_md.jpg" loading="lazy"/></div>
-								<div class="ref-product-data">
-									<div class="ref-product-info">
-										<h5 class="ref-name">{{course[1]}}</h5>
-										<p class="ref-excerpt">{{course[2]}}</p>
-									</div>
-									<div class="ref-addons"><a class="ref-button preview-toggle" href="/user/next_challenge?courseID={{course[0]}}">Start</a></div>
-								</div>
-							</div>
-						{% endfor %}
+			{% for course in courses["courses enrolled"] %}
+				<div class="row row-cols-1 row-cols-sm-1 row-cols-md-1 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3 mt-5" style="background: #2d2c38;border-radius: 23px;padding: 13px;">
+					<div class="col offset-lg-0">
+						<img src="{{ url_for('static', filename='media/course-images/'+course[0]+ '.png') }}" style="width: 100%;height: 100%;" />
+					</div>
+					<div class="col-lg-4 offset-lg-4 text-start" style="text-align: center;">
+						<h1 class="text-start" style="font-size: 23.88px;">{{course[2]}}</h1>
+						<a class="btn btn-primary mt-3" role="button" href="/user/next_challenge?courseID={{course[0]}}">Continue</a>
 					</div>
 				</div>
-			</div>
+			{% endfor %}
 		</div>
-    </section><!-- End: user courses -->
+	</section>
 
-	<!-- Start: available courses -->
 	<section class="pt-3 mt-3">
 		<div class="container py-5">
 			<div class="row mb-5">
@@ -62,26 +54,19 @@
 					<h2 class="fw-bold">Available courses</h2>
 				</div>
 			</div>
-			<div data-reflow-type="product-list" data-reflow-order="date_desc" data-reflow-perpage="2">
-				<div class="reflow-product-list">
-					<div class="ref-products">
-						{% for course in courses["other courses"] %}
-							<div class="ref-product">
-								<div class="ref-media"><img class="ref-image" src="https://cdn.bootstrapstudio.io/products/product-30_md.jpg" loading="lazy"/></div>
-								<div class="ref-product-data">
-									<div class="ref-product-info">
-										<h5 class="ref-name">{{course[1]}}</h5>
-										<p class="ref-excerpt">{{course[2]}}</p>
-									</div>
-									<div class="ref-addons"><a class="ref-button preview-toggle" href="/user/enroll-course?courseID={{course[0]}}">Enroll</a></div>
-								</div>
-							</div>
-						{% endfor %}
+			{% for course in courses["other courses"] %}
+				<div class="row row-cols-1 row-cols-sm-1 row-cols-md-1 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3 mt-5" style="background: #2d2c38;border-radius: 23px;padding: 13px;">
+					<div class="col offset-lg-0">
+						<img src="{{ url_for('static', filename='media/course-images/'+course[0]+ '.png') }}" style="width: 100%;height: 100%;" />
+					</div>
+					<div class="col-lg-4 offset-lg-4 text-start" style="text-align: center;">
+						<h1 class="text-start" style="font-size: 23.88px;">{{course[2]}}</h1>
+						<a class="btn btn-primary mt-3" role="button" href="/user/enroll-course?courseID={{course[0]}}">Enroll</a>
 					</div>
 				</div>
-			</div>
+			{% endfor %}
 		</div>
-    </section><!-- End: available courses -->
+	</section>
 	
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/user/bold-and-dark.js') }}"></script>
