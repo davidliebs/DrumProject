@@ -234,6 +234,15 @@ def create_course_entry():
 
 	return course_id
 
+@app.route("/creator/upload_course_logo", methods=["POST"])
+def upload_course_logo():
+	course_id = request.args.get("course_id")
+	course_logo_file = request.files["course_logo"]
+
+	course_logo_file.save(os.path.join(os.getenv("course_logo_upload_path"), course_id+".png"))
+
+	return "Successful"
+
 @app.route("/creator/create_challenge_entry", methods=["POST"])
 def create_challenge_entry():
 	conn, cur = returnDBConnection()

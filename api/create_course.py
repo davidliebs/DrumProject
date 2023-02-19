@@ -21,12 +21,21 @@ b2_api, bucket = blob_storage_library.returnBucket()
 
 class Course:
 	def __init__(self, course_filepath, course_name, course_description, no_challenges):
-		self.df = pd.read_csv(course_filepath)
+		self.course_filepath = course_filepath
+		self.df = pd.read_csv(os.path.join(self.course_filepath, "course.csv"))
 
 		data = {"courseName": course_name, "courseDescription": course_description, "courseNoChallenges": no_challenges}
 		
 		res = requests.post(f"{os.getenv('api_base_url')}/creator/create_course_entry", json=data)
 		self.course_id = res.text
+	
+	def uploadCourseLogo(self):
+		params={"course_id": self.course_id}
+		files=[
+			('course_logo',('course-logo.png',open(os.path.join(self.course_filepath, "course-logo.png"),'rb'),'image/png'))
+		]
+
+		requests.post(f"{os.getenv('api_base_url')}/creator/upload_course_logo", params=params, files=files)
 
 	def populateChallengesTable(self):
 		for index, row in self.df.iterrows():
@@ -49,10 +58,12 @@ class Course:
 
 			res = requests.post(f"{os.getenv('api_base_url')}/creator/create_challenge_entry", json=data)
 
-course = Course("/home/david/Desktop/BeatBuddy/Courses/Beginner Rock Course/course.csv", 
+course = Course("/home/david/Desktop/BeatBuddy/Courses/Beginner Rock Course/", 
 				"Rock course", "Get started with beatbuddys very own rock course!", 
 				5
 )
+
+course.uploadCourseLogo()
 course.populateChallengesTable()
 
 conn.close()
