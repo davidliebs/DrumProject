@@ -8,15 +8,6 @@ import os
 import blob_storage_library
 import requests
 
-conn = mysql.connector.connect(
-	user = os.getenv("db_user"),
-	password = os.getenv("db_password"),
-	database = os.getenv("db_database"),
-	host = os.getenv("db_host"),
-	port = int(os.getenv("db_port"))
-)
-cur = conn.cursor()
-
 b2_api, bucket = blob_storage_library.returnBucket()
 
 class Course:
@@ -59,11 +50,9 @@ class Course:
 			res = requests.post(f"{os.getenv('api_base_url')}/creator/create_challenge_entry", json=data)
 
 course = Course("/home/david/Desktop/BeatBuddy/Courses/Beginner Rock Course/", 
-				"Rock course", "Get started with beatbuddys very own rock course!", 
-				5
+				"BeatBuddy Beginner Rock course", "Get started with beatbuddys very own beginner rock course!", 
+				10
 )
 
 course.uploadCourseLogo()
 course.populateChallengesTable()
-
-conn.close()
