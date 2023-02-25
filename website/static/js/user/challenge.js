@@ -64,6 +64,10 @@ $(window).on("load", function() {
 			return;
 		}
 
+		if (midiData.data[2] < 12) {
+			return;
+		}
+
 		if (midiData.data[0] === 153 || midiData.data[0] === 144) {
 			const dataForSvg = musicNotation.updateMusic(Date.now(), midiData.data);
 

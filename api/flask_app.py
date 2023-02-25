@@ -179,42 +179,46 @@ def enroll_course():
 
 	return jsonify("Success")
 
-@app.route("/user/calibrate_drum_kit", methods=["POST"])
-def calibrate_drum_kit():
-	conn, cur = returnDBConnection()
+# @app.route("/user/calibrate_drum_kit", methods=["POST"])
+# def calibrate_drum_kit():
+# 	conn, cur = returnDBConnection()
 
-	data = request.json
+# 	data = request.json
 
-	cur.execute(f"""
-		INSERT INTO userDrumKits
-		VALUES ('{data['userID']}', '{json.dumps(data['drumKitData'])}')
-		ON DUPLICATE KEY UPDATE
-		midiNotesToDrumName='{json.dumps(data['drumKitData'])}'
-	""")
+# 	cur.execute(f"""
+# 		INSERT INTO userDrumKits
+# 		VALUES ('{data['userID']}', '{json.dumps(data['drumKitData'])}')
+# 		ON DUPLICATE KEY UPDATE
+# 		midiNotesToDrumName='{json.dumps(data['drumKitData'])}'
+# 	""")
 
-	conn.commit()
-	conn.close()
+# 	conn.commit()
+# 	conn.close()
 
-	return "Success"
+# 	return "Success"
 
 @app.route("/user/request_midi_notes_to_drum_name")
 def request_midi_notes_to_drum_name():
-	conn, cur = returnDBConnection()
+	midiNotesToDrumName = {
+		35: "bass-drum",
+		36: "bass-drum",
+		37: "side-stick",
+		38: "snare",
+		40: "snare",
+		41: "floor-tom",
+		42: "closed hi-hat",
+		43: "floor-tom",
+		44: "pedal hi-hat",
+		45: "mid-tom",
+		46: "open hi-hat",
+		47: "high-tom",
+		49: "crash",
+		51: "ride",
+		53: "ride-bell",
+		57: "crash"
+	}
 
-	userID = request.args.get("userID")
-
-	cur.execute(f"""
-		SELECT midiNotesToDrumName FROM userDrumKits WHERE userID='{userID}'
-	""")
-
-	midiNotesToDrumName = cur.fetchone()
-
-	if midiNotesToDrumName == None:
-		return jsonify("no drum kits")
-
-	conn.close()
-
-	return jsonify(midiNotesToDrumName[0])
+	return jsonify(midiNotesToDrumName)
 
 @app.route("/creator/create_course_entry", methods=["POST"])
 def create_course_entry():

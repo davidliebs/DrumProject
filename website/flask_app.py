@@ -156,44 +156,44 @@ def enroll_course():
 	
 	return redirect("/user/home")
 
-@app.route("/user/calibrate", methods=["GET", "POST"])
-def calibrate():
-	if not session.get("userID", False):
-		return redirect("/user/login")
+# @app.route("/user/calibrate", methods=["GET", "POST"])
+# def calibrate():
+# 	if not session.get("userID", False):
+# 		return redirect("/user/login")
 
-	drums = [
-				("snare", "snare", "snare"),
-				("high tom", "high-tom", "high-tom"),
-				("mid tom", "mid-tom", "mid-tom"),
-				("floor tom", "floor-tom", "floor-tom"),
-				("bass drum", "bass-drum", "bass-drum"),
-				("hi-hat (closed)", "hh-closed", "closed hi-hat"),
-				("hi-hat(open)", "hh-open", "open hi-hat"),
-				("crash (1)", "crash-1", "crash"),
-				("crash (2)", "crash-2", "crash"),
-				("ride", "ride", "ride")
-	]
+# 	drums = [
+# 				("snare", "snare", "snare"),
+# 				("high tom", "high-tom", "high-tom"),
+# 				("mid tom", "mid-tom", "mid-tom"),
+# 				("floor tom", "floor-tom", "floor-tom"),
+# 				("bass drum", "bass-drum", "bass-drum"),
+# 				("hi-hat (closed)", "hh-closed", "closed hi-hat"),
+# 				("hi-hat(open)", "hh-open", "open hi-hat"),
+# 				("crash (1)", "crash-1", "crash"),
+# 				("crash (2)", "crash-2", "crash"),
+# 				("ride", "ride", "ride")
+# 	]
 
-	if request.method == "GET":	
-		res = requests.get(f"{os.getenv('api_base_url')}/user/request_midi_notes_to_drum_name", params={"userID": session["userID"]})
-		midi_notes_to_drum_name = res.json()
+# 	if request.method == "GET":	
+# 		res = requests.get(f"{os.getenv('api_base_url')}/user/request_midi_notes_to_drum_name", params={"userID": session["userID"]})
+# 		midi_notes_to_drum_name = res.json()
 
-		drum_kit_exists=True
-		if midi_notes_to_drum_name == "no drum kits":
-			drum_kit_exists=False
+# 		drum_kit_exists=True
+# 		if midi_notes_to_drum_name == "no drum kits":
+# 			drum_kit_exists=False
 		
-		return render_template("user/calibrate.html", drums=drums, drum_kit_exists=drum_kit_exists)
+# 		return render_template("user/calibrate.html", drums=drums, drum_kit_exists=drum_kit_exists)
 
-	if request.method == "POST":
-		drum_kit_data = {}
+# 	if request.method == "POST":
+# 		drum_kit_data = {}
 
-		for i in drums:
-			drum_kit_data[int(request.form[i[1]])] = i[2]
+# 		for i in drums:
+# 			drum_kit_data[int(request.form[i[1]])] = i[2]
 		
-		data = {"userID": session["userID"], "drumKitData": drum_kit_data}
-		res = requests.post(f"{os.getenv('api_base_url')}/user/calibrate_drum_kit", json=data)
+# 		data = {"userID": session["userID"], "drumKitData": drum_kit_data}
+# 		res = requests.post(f"{os.getenv('api_base_url')}/user/calibrate_drum_kit", json=data)
 
-		return redirect("/user/home")
+# 		return redirect("/user/home")
 
 @app.route("/user/payment")
 def payment():
