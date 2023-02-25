@@ -16,7 +16,6 @@
 		<div class="container"><a class="navbar-brand d-flex align-items-center" href="/user/"><img src="{{url_for('static', filename='media/beatbuddy.svg')}}" style="width: 237px;" /></a><button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
 			<div id="navcol-1" class="collapse navbar-collapse">
 				<ul class="navbar-nav ms-auto">
-					<li class="nav-item"><a class="nav-link active" href="#features">Features</a></li>
 					<li class="nav-item"><a class="nav-link active" href="#pricing">Pricing</a></li>
 					<li class="nav-item"><a class="nav-link active" href="/user/login">Log in</a></li>
 				</ul><a class="btn btn-primary shadow" role="button" href="/user/signup">Sign up</a>
@@ -25,19 +24,16 @@
 	</nav>
 
 	<section class="mt-5">
+		<div class="col-lg-8 offset-lg-2">
+			<div class="col"><img src="{{url_for('static', filename='media/landing-page/example-challenge.png')}}" style="width: 100%;height: 100%;border-radius: 15px;" /></div>
+		</div>
+	</section>
+
+	<section class="mt-5">
 		<div class="row mb-5" style="margin-right: 0px;margin-left: 0px;">
 			<div class="col-md-8 col-xl-6 text-center mx-auto">
 				<h2 class="fw-bold">How to get started?</h2>
 			</div>
-		</div>
-		<div class="row" style="margin-right: 0px;margin-left: 0px;">
-			<div class="col-lg-8 offset-lg-2 mb-3">
-				<h1 style="text-align: left;font-size: 24.74px;"><strong>Calibrate your electric drum kit</strong></h1>
-				<h1 style="font-size: 23.74px;text-align: left;color: rgb(164,164,164);">Simply follow the instructions and link your kit to BeatBuddy. Yes, its that easy!</h1>
-			</div>
-		</div>
-		<div class="row" style="margin-right: 0px;margin-left: 0px;">
-			<div class="col-lg-6 offset-lg-3" style="text-align: center;"><img src="{{url_for('static', filename='media/landing-page/calibration.png')}}" style="border-radius: 32px;width: 100%;height: 100%;" width="691" height="354" /></div>
 		</div>
 		<div class="row mt-5" style="margin-right: 0px;margin-left: 0px;">
 			<div class="col-lg-8 offset-lg-2 mb-3">
@@ -51,7 +47,7 @@
 		<div class="row mt-5" style="margin-right: 0px;margin-left: 0px;">
 			<div class="col-lg-8 offset-lg-2 mb-3">
 				<h1 style="text-align: left;font-size: 24.74px;"><strong>Play through the challenges...</strong></h1>
-				<h1 style="font-size: 23.74px;text-align: left;color: rgb(164,164,164);">Analyse where you went out of time with BeatBuddy&#39;s real time feedback. Move to the next challenge once you played the music correctly.</h1>
+				<h1 style="font-size: 23.74px;text-align: left;color: rgb(164,164,164);">Analyse where you went out of time with BeatBuddy&#39;s real time feedback. Move to the next challenge once you've played the music correctly.</h1>
 			</div>
 		</div>
 		<div class="row" style="margin-right: 0px;margin-left: 0px;">
@@ -96,7 +92,7 @@
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between">
                                 <div>
-                                    <h3 class="fw-bold text-white mb-0">Enhanced</h3>
+                                    <h3 class="fw-bold text-white mb-0">Pro</h3>
                                     <h4 class="display-4 fw-bold text-white">£5.99</h4>
                                 </div>
                                 <div><span class="badge rounded-pill bg-primary text-uppercase bg-semi-white">Best Value</span></div>
