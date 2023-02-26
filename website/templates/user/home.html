@@ -17,9 +17,9 @@
 	<nav id="mainNav" class="navbar navbar-dark navbar-expand-md sticky-top navbar-shrink py-3">
 		<div class="container">
 			<a class="navbar-brand d-flex align-items-center" href="/user/"><img src="{{ url_for('static', filename='media/beatbuddy.svg') }}" style="width: 237px;" /></a>
+			<button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
 			<div id="navcol-1" class="collapse navbar-collapse">
 				<ul class="navbar-nav mx-auto"></ul>
-				<!-- <a class="btn btn-primary" role="button" style="background: transparent;border-color: transparent;" href="/user/calibrate">Calibrate drum kit</a> -->
 				<a class="btn btn-primary" role="button" style="background: transparent;border-color: transparent;" href="/user/logout">Log out</a>
 				<a style="display: none;" class="btn btn-primary" role="button" style="background: var(--bs-btn-bg);border-color: transparent;" href="/user/payment" id="paymentButton">Upgrade</a>
 			</div>
