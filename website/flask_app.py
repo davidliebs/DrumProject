@@ -156,45 +156,6 @@ def enroll_course():
 	
 	return redirect("/user/home")
 
-# @app.route("/user/calibrate", methods=["GET", "POST"])
-# def calibrate():
-# 	if not session.get("userID", False):
-# 		return redirect("/user/login")
-
-# 	drums = [
-# 				("snare", "snare", "snare"),
-# 				("high tom", "high-tom", "high-tom"),
-# 				("mid tom", "mid-tom", "mid-tom"),
-# 				("floor tom", "floor-tom", "floor-tom"),
-# 				("bass drum", "bass-drum", "bass-drum"),
-# 				("hi-hat (closed)", "hh-closed", "closed hi-hat"),
-# 				("hi-hat(open)", "hh-open", "open hi-hat"),
-# 				("crash (1)", "crash-1", "crash"),
-# 				("crash (2)", "crash-2", "crash"),
-# 				("ride", "ride", "ride")
-# 	]
-
-# 	if request.method == "GET":	
-# 		res = requests.get(f"{os.getenv('api_base_url')}/user/request_midi_notes_to_drum_name", params={"userID": session["userID"]})
-# 		midi_notes_to_drum_name = res.json()
-
-# 		drum_kit_exists=True
-# 		if midi_notes_to_drum_name == "no drum kits":
-# 			drum_kit_exists=False
-		
-# 		return render_template("user/calibrate.html", drums=drums, drum_kit_exists=drum_kit_exists)
-
-# 	if request.method == "POST":
-# 		drum_kit_data = {}
-
-# 		for i in drums:
-# 			drum_kit_data[int(request.form[i[1]])] = i[2]
-		
-# 		data = {"userID": session["userID"], "drumKitData": drum_kit_data}
-# 		res = requests.post(f"{os.getenv('api_base_url')}/user/calibrate_drum_kit", json=data)
-
-# 		return redirect("/user/home")
-
 @app.route("/user/payment")
 def payment():
 	if not session.get("userID", False):
@@ -236,5 +197,24 @@ def create_checkout_session():
 @app.route("/user/payment/success")
 def payment_success():
 	return render_template("user/payment-success.html")
+
+@app.route("/creator/home")
+def creator_home():
+	# fetching courses
+	res = requests.get(f"{os.getenv('api_base_url')}/creator/fetch_courses")
+	courses = res.json()
+
+	return render_template("creator/home.html", courses=courses)
+
+@app.route("/creator/edit_course")
+def edit_course():
+	if request.method == "GET":
+		courseID = request.args.get("courseID")
+
+		res = requests.get(f"{os.getenv('api_base_url')}/creator/fetch_course_information", params={"courseID": courseID})
+		data = res.json()
+
+		return render_template("creator/edit_course.html", data=data)
+	
 
 app.run(port=8888, debug=True)

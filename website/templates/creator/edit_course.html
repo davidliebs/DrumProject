@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/user/bootstrap.min.css') }}">
+	</head>
+
+	<body style="background: #2d2c38;">
+		<div class="container">
+			<form method="POST" action="/creator/edit_course">
+				<div class="row row-cols-1 row-cols-sm-1 row-cols-md-1 row-cols-lg-1 row-cols-xl-1 row-cols-xxl-1">
+					<div class="col-xl-12">
+						<h2>Course title</h2>
+						<input value="{{data['course_info'][0]}}" class="form-control" type="text" />
+					</div>
+					<div class="col-xl-12 mt-3">
+						<h2>Course description</h2>
+						<textarea class="form-control">{{data["course_info"][1]}}</textarea>
+					</div>
+					<div class="col-xl-12 mt-3">
+						<h2>Course logo upload</h2><input class="form-control" type="file" />
+					</div>
+				</div>
+				<div class="row mt-5">
+					<div class="col">
+						<h1 class="text-center">Challenges</h1>
+					</div>
+				</div>
+				{% for challenge in data["challenges"] %}
+					<div class="row mt-5" style="background: #27262e;padding: 10px;border-radius: 15px;">
+						<div class="col-lg-3 col-xl-2">
+							<h2 style="text-align: left;">No</h2>
+							<input value="{{data['challenges'][challenge][2]}}" class="form-control" type="number" />
+						</div>
+						<div class="col-xl-10">
+							<h2 class="text-start">Title</h2>
+							<input value="{{data['challenges'][challenge][3]}}" class="form-control" type="text" />
+						</div>
+						<div class="col-xl-12">
+							<h2 class="text-start">Message</h2>
+							<textarea class="form-control">{{data['challenges'][challenge][4]}}</textarea>
+						</div>
+						<div class="col-xl-6">
+							<h2 class="text-start">SVG upload</h2>
+							<input class="form-control" type="file" />
+						</div>
+						<div class="col">
+							<h2 class="text-start">MIDI upload</h2>
+							<input class="form-control" type="file" />
+						</div>
+					</div>
+				{% endfor %}
+				<div class="row mt-5">
+					<div class="col-xl-12 offset-xl-0" style="text-align: center;"><button class="btn btn-primary" type="button">Save</button></div>
+				</div>
+			</form>
+		</div>
+	</body>
+</html>

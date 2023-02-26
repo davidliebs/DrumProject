@@ -263,6 +263,40 @@ def create_challenge_entry():
 
 	return data["challengeID"]
 
+@app.route("/creator/fetch_courses", methods=["GET"])
+def fetch_courses():
+	conn, cur = returnDBConnection()
+
+	cur.execute("SELECT courseID FROM courses")
+	data = [i[0] for i in cur.fetchall()]
+
+	conn.close()
+
+	return jsonify(data)
+
+@app.route("/creator/fetch_course_information", methods=["GET"])
+def fetch_course_information():
+	conn, cur = returnDBConnection()
+
+	courseID = request.args.get("courseID")
+
+	data = {}
+
+	cur.execute(f"SELECT courseName, courseDescription FROM courses WHERE courseID='{courseID}'")
+	data["course_info"] = cur.fetchone()
+
+	cur.execute(f"""
+		SELECT challengeID, courseID, challengeNo, challengeTitle, challengeMessage 
+		FROM challenges 
+		WHERE courseID='{courseID}'
+	""")
+
+	data["challenges"] = {i[2]: i for i in cur.fetchall()}
+
+	conn.close()
+
+	return jsonify(data)
+
 @app.route("/stripe-webhook", methods=["POST"])
 def stripe_webhook():
 	payload = request.get_data(as_text=True)
