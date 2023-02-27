@@ -206,15 +206,72 @@ def creator_home():
 
 	return render_template("creator/home.html", courses=courses)
 
-@app.route("/creator/edit_course")
+@app.route("/creator/edit_course", methods=["GET"])
 def edit_course():
-	if request.method == "GET":
-		courseID = request.args.get("courseID")
+	courseID = request.args.get("courseID")
 
-		res = requests.get(f"{os.getenv('api_base_url')}/creator/fetch_course_information", params={"courseID": courseID})
-		data = res.json()
+	res = requests.get(f"{os.getenv('api_base_url')}/creator/fetch_course_information", params={"courseID": courseID})
+	data = res.json()
 
-		return render_template("creator/edit_course.html", data=data)
+	return render_template("creator/edit_course.html", data=data)
+
+@app.route("/creator/edit_course_information", methods=["POST"])
+def edit_course_information():
+	courseID = request.form.get("courseID")
+
+	courseName = request.form.get("courseName")
+	courseDescription = request.form.get("courseDescription")
+	courseNoChallenges = request.form.get("courseNoChallenges")
+	courseLogoFile = request.files.get("courseLogo")
+
+	if courseLogoFile.filename != '':
+		params={"courseID": courseID}
+		files=[
+			('course_logo', ('course-logo.png', courseLogoFile.read(),'image/png'))
+		]
+
+		requests.post(f"{os.getenv('api_base_url')}/creator/upload_course_logo", params=params, files=files)
 	
+	data = {"courseID": courseID, "courseName": courseName, "courseDescription": courseDescription, "courseNoChallenges": courseNoChallenges}
+	requests.post(f"{os.getenv('api_base_url')}/creator/create_course_entry", json=data)
+
+	return redirect("/creator/home")
+
+@app.route("/creator/edit_challenge_information", methods=["POST"])
+def edit_challenge_information():
+	challengeID = request.form.get("challengeID")
+	courseID = request.form.get("courseID")
+
+	challengeNo = request.form.get("challengeNo")
+	challengeTitle = request.form.get("challengeTitle")
+	challengeMessage = request.form.get("challengeMessage")
+	challengeSVGFile = request.files.get("challengeSVGFile")
+	challengeMIDIFile = request.files.get("challengeMIDIFile")
+
+	if challengeSVGFile.filename != '':
+		params = {"challengeID": challengeID}
+		files=[
+			('challengeSVGFile',('challenge_svg.svg', challengeSVGFile.read(),'image/svg+xml'))
+		]
+		requests.post(f"{os.getenv('api_base_url')}/creator/process_challenge_svg_file", files=files, params=params)
+
+	if challengeMIDIFile.filename != '':
+		params = {"challengeID": challengeID}
+		files=[
+			('challengeMIDIFile',('challenge_midi.mid', challengeMIDIFile.read(),'audip/midi'))
+		]
+		requests.post(f"{os.getenv('api_base_url')}/creator/process_challenge_midi_file", files=files, params=params)
+	
+	data = {
+		"challengeID": challengeID,
+		"courseID": courseID,
+		"challengeNo": challengeNo,
+		"challengeTitle": challengeTitle,
+		"challengeMessage": challengeMessage
+	}
+	res = requests.post(f"{os.getenv('api_base_url')}/creator/create_challenge_entry", json=data)
+
+	return redirect("/creator/home")
+
 
 app.run(port=8888, debug=True)

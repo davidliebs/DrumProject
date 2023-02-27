@@ -5,6 +5,8 @@ import uuid
 import bcrypt
 import mysql.connector
 import stripe
+import blob_storage_library
+import process_challenge_files
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -18,6 +20,8 @@ stripe_keys = {
 }
 
 stripe.api_key = stripe_keys["secret_key"]
+
+b2_api, bucket = blob_storage_library.returnBucket()
 
 def returnDBConnection():
 	conn = mysql.connector.connect(
@@ -226,11 +230,16 @@ def create_course_entry():
 	
 	data = request.json
 
-	course_id = str(uuid.uuid4())
+	if not data.get("courseID", False):
+		course_id = str(uuid.uuid4())
+	else:
+		course_id = data["courseID"]
 
 	cur.execute(f"""
 		INSERT INTO courses
 		VALUES ('{course_id}', '{data["courseName"]}', '{data["courseDescription"]}', '{data["courseNoChallenges"]}')
+		ON DUPLICATE KEY UPDATE
+		courseName='{data["courseName"]}', courseDescription='{data["courseDescription"]}', courseNoChallenges='{data["courseNoChallenges"]}'
 	""")
 
 	conn.commit()
@@ -240,10 +249,10 @@ def create_course_entry():
 
 @app.route("/creator/upload_course_logo", methods=["POST"])
 def upload_course_logo():
-	course_id = request.args.get("course_id")
+	courseID = request.args.get("courseID")
 	course_logo_file = request.files["course_logo"]
 
-	course_logo_file.save(os.path.join(os.getenv("course_logo_upload_path"), course_id+".png"))
+	course_logo_file.save(os.path.join(os.getenv("course_logo_upload_path"), courseID+".png"))
 
 	return "Successful"
 
@@ -254,14 +263,64 @@ def create_challenge_entry():
 	data = request.json
 
 	cur.execute(f"""
-		INSERT INTO challenges
-		VALUES ('{data["challengeID"]}', '{data["courseID"]}', '{data["musicData"]}', '{data["svgIndexes"]}', '{data["challengeNo"]}', '{data["svgURL"]}', '{data["challengeTitle"]}', '{data["challengeMessage"]}')
+		INSERT INTO challenges (challengeID, courseID, challengeNo, challengeTitle, challengeMessage)
+		VALUES ('{data["challengeID"]}', '{data["courseID"]}', '{data["challengeNo"]}', '{data["challengeTitle"]}', '{data["challengeMessage"]}')
+		ON DUPLICATE KEY UPDATE
+		challengeNo='{data["challengeNo"]}', challengeTitle='{data["challengeTitle"]}', challengeMessage='{data["challengeMessage"]}'
 	""")
 
 	conn.commit()
 	conn.close()
 
 	return data["challengeID"]
+
+@app.route("/creator/process_challenge_svg_file", methods=["POST"])
+def process_challenge_svg_file():
+	conn, cur = returnDBConnection()
+
+	challengeID = request.args.get("challengeID")
+	challengeSVGFile = request.files.get("challengeSVGFile")
+	challengeSVGFile.save("./static/media/challenge.svg")
+
+	fileURL = blob_storage_library.uploadFileToBucket(b2_api, bucket, "./static/media/challenge.svg", challengeID+".svg")
+	svgIndexes = json.dumps(process_challenge_files.return_svg_indexes("./static/media/challenge.svg"))
+
+	os.remove("./static/media/challenge.svg")
+
+	cur.execute(f"""
+		UPDATE challenges
+		SET svgIndexes='{svgIndexes}', challengeSvgURL='{fileURL}'
+		WHERE challengeID = '{challengeID}'
+	""")
+
+	conn.commit()
+	conn.close()
+
+	return "Successful"
+
+@app.route("/creator/process_challenge_midi_file", methods=["POST"])
+def process_challenge_midi_file():
+	conn, cur = returnDBConnection()
+
+	challengeID = request.args.get("challengeID")
+	challengeMIDIFile = request.files.get("challengeMIDIFile")
+
+	challengeMIDIFile.save("./static/media/challenge.mid")
+
+	music_data = json.dumps(process_challenge_files.return_formatted_midi_notes("./static/media/challenge.mid"))
+
+	os.remove("./static/media/challenge.mid")
+
+	cur.execute(f"""
+		UPDATE challenges
+		SET musicData='{music_data}'
+		WHERE challengeID = '{challengeID}'
+	""")
+
+	conn.commit()
+	conn.close()
+
+	return "Successful"
 
 @app.route("/creator/fetch_courses", methods=["GET"])
 def fetch_courses():
@@ -282,7 +341,7 @@ def fetch_course_information():
 
 	data = {}
 
-	cur.execute(f"SELECT courseName, courseDescription FROM courses WHERE courseID='{courseID}'")
+	cur.execute(f"SELECT courseID, courseName, courseDescription, courseNoChallenges FROM courses WHERE courseID='{courseID}'")
 	data["course_info"] = cur.fetchone()
 
 	cur.execute(f"""
