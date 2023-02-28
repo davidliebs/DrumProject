@@ -1,0 +1,41 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>Add Course</title>
+
+    <meta name="description" content="The most interactive way to drum" />
+
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/user/bootstrap.min.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <form method="POST" action="/creator/add_course" enctype="multipart/form-data">
+            <div class="row row-cols-1 row-cols-sm-1 row-cols-md-1 row-cols-lg-1 row-cols-xl-1 row-cols-xxl-1">
+                <div class="col-xl-12">
+                    <h2>Course title</h2>
+					<input name="courseName" class="form-control" type="text" required>
+                </div>
+                <div class="col-xl-12 mt-3">
+                    <h2>Course description</h2>
+					<textarea name="courseDescription" class="form-control" required></textarea>
+                </div>
+				<div class="col-xl-12 mt-3">
+					<h2 style="text-align: left;">Number of challenges</h2>
+					<input name="courseNoChallenges" class="form-control" type="number" required>
+				</div>
+                <div class="col-xl-12 mt-3">
+                    <h2>Course logo upload</h2>
+					<input name="courseLogo" class="form-control" type="file" required>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col" style="text-align: center;"><button class="btn btn-primary" type="submit">Create Course</button></div>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

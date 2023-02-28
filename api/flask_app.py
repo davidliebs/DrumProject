@@ -262,9 +262,14 @@ def create_challenge_entry():
 	
 	data = request.json
 
+	if not data.get("challengeID", False):
+		challengeID = str(uuid.uuid4())
+	else:
+		challengeID = data["challengeID"]
+
 	cur.execute(f"""
 		INSERT INTO challenges (challengeID, courseID, challengeNo, challengeTitle, challengeMessage)
-		VALUES ('{data["challengeID"]}', '{data["courseID"]}', '{data["challengeNo"]}', '{data["challengeTitle"]}', '{data["challengeMessage"]}')
+		VALUES ('{challengeID}', '{data["courseID"]}', '{data["challengeNo"]}', '{data["challengeTitle"]}', '{data["challengeMessage"]}')
 		ON DUPLICATE KEY UPDATE
 		challengeNo='{data["challengeNo"]}', challengeTitle='{data["challengeTitle"]}', challengeMessage='{data["challengeMessage"]}'
 	""")
@@ -272,7 +277,7 @@ def create_challenge_entry():
 	conn.commit()
 	conn.close()
 
-	return data["challengeID"]
+	return challengeID
 
 @app.route("/creator/process_challenge_svg_file", methods=["POST"])
 def process_challenge_svg_file():

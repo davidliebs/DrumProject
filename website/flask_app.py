@@ -206,6 +206,34 @@ def creator_home():
 
 	return render_template("creator/home.html", courses=courses)
 
+@app.route("/creator/add_course", methods=["GET", "POST"])
+def add_course():
+	if request.method == "GET":
+		return render_template("creator/add_course.html")
+
+	courseName = request.form.get("courseName")
+	courseDescription = request.form.get("courseDescription")
+	courseNoChallenges = request.form.get("courseNoChallenges")
+	courseLogoFile = request.files.get("courseLogo")
+
+	# create course entry
+	data = {
+		"courseName": courseName,
+		"courseDescription": courseDescription,
+		"courseNoChallenges": courseNoChallenges
+	}
+
+	res = requests.post(f"{os.getenv('api_base_url')}/creator/create_course_entry", json=data)
+	courseID = res.text
+
+	files=[
+		('course_logo', ('course-logo.png', courseLogoFile.read(),'image/png'))
+	]
+
+	requests.post(f"{os.getenv('api_base_url')}/creator/upload_course_logo", params={"courseID": courseID}, files=files)
+	
+	return redirect("/creator/home")
+
 @app.route("/creator/edit_course", methods=["GET"])
 def edit_course():
 	courseID = request.args.get("courseID")
@@ -248,6 +276,19 @@ def edit_challenge_information():
 	challengeSVGFile = request.files.get("challengeSVGFile")
 	challengeMIDIFile = request.files.get("challengeMIDIFile")
 
+	data = {
+		"courseID": courseID,
+		"challengeNo": challengeNo,
+		"challengeTitle": challengeTitle,
+		"challengeMessage": challengeMessage
+	}
+
+	if challengeID != None:
+		data["challengeID"] = challengeID
+
+	res = requests.post(f"{os.getenv('api_base_url')}/creator/create_challenge_entry", json=data)
+	challengeID = res.text
+
 	if challengeSVGFile.filename != '':
 		params = {"challengeID": challengeID}
 		files=[
@@ -261,17 +302,7 @@ def edit_challenge_information():
 			('challengeMIDIFile',('challenge_midi.mid', challengeMIDIFile.read(),'audip/midi'))
 		]
 		requests.post(f"{os.getenv('api_base_url')}/creator/process_challenge_midi_file", files=files, params=params)
-	
-	data = {
-		"challengeID": challengeID,
-		"courseID": courseID,
-		"challengeNo": challengeNo,
-		"challengeTitle": challengeTitle,
-		"challengeMessage": challengeMessage
-	}
-	res = requests.post(f"{os.getenv('api_base_url')}/creator/create_challenge_entry", json=data)
 
 	return redirect("/creator/home")
-
 
 app.run(port=8888, debug=True)
