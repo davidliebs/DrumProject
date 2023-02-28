@@ -183,24 +183,6 @@ def enroll_course():
 
 	return jsonify("Success")
 
-# @app.route("/user/calibrate_drum_kit", methods=["POST"])
-# def calibrate_drum_kit():
-# 	conn, cur = returnDBConnection()
-
-# 	data = request.json
-
-# 	cur.execute(f"""
-# 		INSERT INTO userDrumKits
-# 		VALUES ('{data['userID']}', '{json.dumps(data['drumKitData'])}')
-# 		ON DUPLICATE KEY UPDATE
-# 		midiNotesToDrumName='{json.dumps(data['drumKitData'])}'
-# 	""")
-
-# 	conn.commit()
-# 	conn.close()
-
-# 	return "Success"
-
 @app.route("/user/request_midi_notes_to_drum_name")
 def request_midi_notes_to_drum_name():
 	midiNotesToDrumName = {
@@ -360,6 +342,21 @@ def fetch_course_information():
 	conn.close()
 
 	return jsonify(data)
+
+@app.route("/creator/delete_course", methods=["GET"])
+def delete_course():
+	conn, cur = returnDBConnection()
+
+	courseID = request.args.get("courseID")
+
+	cur.execute(f"DELETE FROM courses WHERE courseID='{courseID}'")
+	cur.execute(f"DELETE FROM challenges WHERE courseID='{courseID}'")
+	cur.execute(f"DELETE FROM coursesEnrolled WHERE courseID='{courseID}'")
+
+	conn.commit()
+	conn.close()
+
+	return "Successful"
 
 @app.route("/stripe-webhook", methods=["POST"])
 def stripe_webhook():

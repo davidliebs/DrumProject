@@ -305,4 +305,14 @@ def edit_challenge_information():
 
 	return redirect("/creator/home")
 
+@app.route("/creator/delete_course", methods=["GET"])
+def delete_course():
+	courseID = request.args.get("courseID")
+
+	print(courseID)
+
+	requests.get(f"{os.getenv('api_base_url')}/creator/delete_course", params={"courseID": courseID})
+
+	return redirect("/creator/home")
+
 app.run(port=8888, debug=True)
