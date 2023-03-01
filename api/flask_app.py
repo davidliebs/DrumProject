@@ -163,17 +163,20 @@ def get_next_challenge_id():
 
 	conn, cur = returnDBConnection()
 
+	userID = request.args.get("userID")
 	courseID = request.args.get("courseID")
 	challengeID = request.args.get("challengeID")
 
-	if challengeID == None:
-		cur.execute(f"SELECT challengeID FROM challenges WHERE courseID = '{courseID}' AND challengeNo = 1")
-		nextChallengeID = cur.fetchone()
-	else:
-		cur.execute(f"SELECT challengeNo FROM challenges WHERE courseID = '{courseID}' AND challengeId = '{challengeID}'")
-		challenge_no = cur.fetchone()[0]
-		cur.execute(f"SELECT challengeID FROM challenges WHERE courseID = '{courseID}' AND challengeNo = {challenge_no+1}")
-		nextChallengeID = cur.fetchone()
+	cur.execute(f"SELECT lastChallengeCompleted FROM coursesEnrolled WHERE userID='{userID}' AND courseID='{courseID}'")
+	lastChallengeCompleted = cur.fetchone()[0]
+
+	if challengeID != None:
+		lastChallengeCompleted += 1
+		cur.execute(f"UPDATE coursesEnrolled SET lastChallengeCompleted = {lastChallengeCompleted}")
+		conn.commit()
+
+	cur.execute(f"SELECT challengeID FROM challenges WHERE courseID = '{courseID}' AND challengeNo={lastChallengeCompleted+1}")
+	nextChallengeID = cur.fetchone()
 
 	conn.close()
 

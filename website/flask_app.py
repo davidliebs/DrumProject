@@ -38,6 +38,9 @@ def user_home():
 	if not session.get("userID", False):
 		return redirect("/user/login")
 	
+	session["courseID"] = None
+	session["challengeID"] = None
+
 	message = ""
 	if request.args.get("limit_message", False):
 		message = "The number of courses you have enrolled to has reached its limit, upgrade your plan so you can enroll to more"
@@ -139,7 +142,7 @@ def next_challenge():
 
 	session["courseID"] = courseID
 
-	params = {"courseID": courseID, "challengeID": challengeID}
+	params = {"userID": session["userID"], "courseID": courseID, "challengeID": challengeID}
 	res = requests.get(f"{os.getenv('api_base_url')}/user/get_next_challengeID", params=params, headers=beat_buddy_api_headers)
 
 	session["challengeID"] = res.json()
