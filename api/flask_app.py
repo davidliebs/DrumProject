@@ -23,6 +23,8 @@ stripe.api_key = stripe_keys["secret_key"]
 
 b2_api, bucket = blob_storage_library.returnBucket()
 
+beatbuddy_api_key = os.getenv("beatbuddy_api_key")
+
 def returnDBConnection():
 	conn = mysql.connector.connect(
 		user = os.getenv("db_user"),
@@ -35,8 +37,17 @@ def returnDBConnection():
 
 	return conn, cur
 
+def authenticate_token():
+	if request.headers.get("beatbuddy_api_key") == beatbuddy_api_key:
+		return True
+	
+	return False
+
 @app.route("/user/signup", methods=["POST"])
 def user_signup():
+	if not authenticate_token():
+		return "Invalid API key", 403
+
 	conn, cur = returnDBConnection()
 
 	signup_data = request.json
@@ -56,6 +67,9 @@ def user_signup():
 
 @app.route("/user/login", methods=["POST"])
 def user_login():
+	if not authenticate_token():
+		return "Invalid API key", 403
+
 	conn, cur = returnDBConnection()
 
 	login_data = request.json
@@ -78,6 +92,9 @@ def user_login():
 
 @app.route("/user/get_paid_status", methods=["GET"])
 def get_paid_status():
+	if not authenticate_token():
+		return "Invalid API key", 403
+
 	conn, cur = returnDBConnection()
 
 	userID = request.args.get("userID")
@@ -94,6 +111,9 @@ def get_paid_status():
 
 @app.route("/user/get_available_courses")
 def get_available_courses():
+	if not authenticate_token():
+		return "Invalid API key", 403
+
 	conn, cur = returnDBConnection()
 
 	userID = request.args.get("userID")
@@ -121,6 +141,9 @@ def get_available_courses():
 
 @app.route("/user/request_music_notation_data")
 def request_music_notation_data():
+	if not authenticate_token():
+		return "Invalid API key", 403
+
 	conn, cur = returnDBConnection()
 
 	courseID = request.args.get("courseID")
@@ -135,6 +158,9 @@ def request_music_notation_data():
 
 @app.route("/user/get_next_challengeID")
 def get_next_challenge_id():
+	if not authenticate_token():
+		return "Invalid API key", 403
+
 	conn, cur = returnDBConnection()
 
 	courseID = request.args.get("courseID")
@@ -158,6 +184,9 @@ def get_next_challenge_id():
 
 @app.route("/user/enroll_course")
 def enroll_course():
+	if not authenticate_token():
+		return "Invalid API key", 403
+
 	conn, cur = returnDBConnection()
 
 	userID = request.args.get("userID")
@@ -185,6 +214,9 @@ def enroll_course():
 
 @app.route("/user/request_midi_notes_to_drum_name")
 def request_midi_notes_to_drum_name():
+	if not authenticate_token():
+		return "Invalid API key", 403
+
 	midiNotesToDrumName = {
 		35: "bass-drum",
 		36: "bass-drum",
@@ -208,6 +240,9 @@ def request_midi_notes_to_drum_name():
 
 @app.route("/creator/create_course_entry", methods=["POST"])
 def create_course_entry():
+	if not authenticate_token():
+		return "Invalid API key", 403
+
 	conn, cur = returnDBConnection()
 	
 	data = request.json
@@ -231,6 +266,9 @@ def create_course_entry():
 
 @app.route("/creator/upload_course_logo", methods=["POST"])
 def upload_course_logo():
+	if not authenticate_token():
+		return "Invalid API key", 403
+
 	courseID = request.args.get("courseID")
 	course_logo_file = request.files["course_logo"]
 
@@ -240,6 +278,9 @@ def upload_course_logo():
 
 @app.route("/creator/create_challenge_entry", methods=["POST"])
 def create_challenge_entry():
+	if not authenticate_token():
+		return "Invalid API key", 403
+
 	conn, cur = returnDBConnection()
 	
 	data = request.json
@@ -263,6 +304,9 @@ def create_challenge_entry():
 
 @app.route("/creator/process_challenge_svg_file", methods=["POST"])
 def process_challenge_svg_file():
+	if not authenticate_token():
+		return "Invalid API key", 403
+
 	conn, cur = returnDBConnection()
 
 	challengeID = request.args.get("challengeID")
@@ -287,6 +331,9 @@ def process_challenge_svg_file():
 
 @app.route("/creator/process_challenge_midi_file", methods=["POST"])
 def process_challenge_midi_file():
+	if not authenticate_token():
+		return "Invalid API key", 403
+
 	conn, cur = returnDBConnection()
 
 	challengeID = request.args.get("challengeID")
@@ -311,6 +358,9 @@ def process_challenge_midi_file():
 
 @app.route("/creator/fetch_courses", methods=["GET"])
 def fetch_courses():
+	if not authenticate_token():
+		return "Invalid API key", 403
+
 	conn, cur = returnDBConnection()
 
 	cur.execute("SELECT courseID FROM courses")
@@ -322,6 +372,9 @@ def fetch_courses():
 
 @app.route("/creator/fetch_course_information", methods=["GET"])
 def fetch_course_information():
+	if not authenticate_token():
+		return "Invalid API key", 403
+
 	conn, cur = returnDBConnection()
 
 	courseID = request.args.get("courseID")
@@ -345,6 +398,9 @@ def fetch_course_information():
 
 @app.route("/creator/delete_course", methods=["GET"])
 def delete_course():
+	if not authenticate_token():
+		return "Invalid API key", 403
+
 	conn, cur = returnDBConnection()
 
 	courseID = request.args.get("courseID")
