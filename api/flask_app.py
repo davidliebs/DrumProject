@@ -75,7 +75,7 @@ def user_login():
 	login_data = request.json
 
 	cur.execute(f"""
-		SELECT userID, userPassword FROM users
+		SELECT userID, userPassword, userAdmin FROM users
 		WHERE userEmail = '{login_data["userEmail"]}'
 	""")
 	returned_data = cur.fetchone()
@@ -86,7 +86,7 @@ def user_login():
 		return jsonify("Incorrect")
 
 	if bcrypt.checkpw(login_data["userPassword"].encode(), returned_data[1].encode()):
-		return jsonify({"userID": returned_data[0]})
+		return jsonify({"userID": returned_data[0], "userAdmin": returned_data[2]})
 	else:
 		return jsonify("Incorrect")
 

@@ -82,6 +82,7 @@ def user_login():
 		return redirect("/user/login")
 
 	session["userID"] = res["userID"]
+	session["userAdmin"] = res["userAdmin"]
 
 	return redirect("/user/home")
 
@@ -202,6 +203,9 @@ def payment_success():
 
 @app.route("/creator/home")
 def creator_home():
+	if not session.get("userID", False) or session.get("userAdmin", False) != 1:
+		return redirect("/user/login")
+
 	# fetching courses
 	res = requests.get(f"{os.getenv('api_base_url')}/creator/fetch_courses", headers=beat_buddy_api_headers)
 	courses = res.json()
@@ -210,6 +214,9 @@ def creator_home():
 
 @app.route("/creator/add_course", methods=["GET", "POST"])
 def add_course():
+	if not session.get("userID", False) or session.get("userAdmin", False) != 1:
+		return redirect("/user/login")
+
 	if request.method == "GET":
 		return render_template("creator/add_course.html")
 
@@ -238,6 +245,9 @@ def add_course():
 
 @app.route("/creator/edit_course", methods=["GET"])
 def edit_course():
+	if not session.get("userID", False) or session.get("userAdmin", False) != 1:
+		return redirect("/user/login")
+
 	courseID = request.args.get("courseID")
 
 	res = requests.get(f"{os.getenv('api_base_url')}/creator/fetch_course_information", params={"courseID": courseID}, headers=beat_buddy_api_headers)
@@ -247,6 +257,9 @@ def edit_course():
 
 @app.route("/creator/edit_course_information", methods=["POST"])
 def edit_course_information():
+	if not session.get("userID", False) or session.get("userAdmin", False) != 1:
+		return redirect("/user/login")
+
 	courseID = request.form.get("courseID")
 
 	courseName = request.form.get("courseName")
@@ -269,6 +282,9 @@ def edit_course_information():
 
 @app.route("/creator/edit_challenge_information", methods=["POST"])
 def edit_challenge_information():
+	if not session.get("userID", False) or session.get("userAdmin", False) != 1:
+		return redirect("/user/login")
+
 	challengeID = request.form.get("challengeID")
 	courseID = request.form.get("courseID")
 
@@ -309,6 +325,9 @@ def edit_challenge_information():
 
 @app.route("/creator/delete_course", methods=["GET"])
 def delete_course():
+	if not session.get("userID", False) or session.get("userAdmin", False) != 1:
+		return redirect("/user/login")
+
 	courseID = request.args.get("courseID")
 
 	requests.get(f"{os.getenv('api_base_url')}/creator/delete_course", params={"courseID": courseID}, headers=beat_buddy_api_headers)
