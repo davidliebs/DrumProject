@@ -17,8 +17,7 @@ stripe_keys = {
 	"secret_key": os.getenv("stripe_secret_key")
 }
 
-beatbuddy_api_key = os.getenv("beatbuddy_api_key")
-beat_buddy_api_headers = {"beatbuddy_api_key": beatbuddy_api_key}
+beat_buddy_api_headers = {"Authorisation": os.getenv("beatbuddy_api_key")}
 
 @app.route("/")
 def index():

@@ -38,7 +38,7 @@ def returnDBConnection():
 	return conn, cur
 
 def authenticate_token():
-	if request.headers.get("beatbuddy_api_key") == beatbuddy_api_key:
+	if request.headers.get("Authorisation") == beatbuddy_api_key:
 		return True
 	
 	return False
@@ -309,14 +309,16 @@ def process_challenge_svg_file():
 
 	conn, cur = returnDBConnection()
 
+	svg_filepath = os.path.join(os.getenv("temporary_file_storage_path"), "challenge.svg")
+
 	challengeID = request.args.get("challengeID")
 	challengeSVGFile = request.files.get("challengeSVGFile")
-	challengeSVGFile.save("./static/media/challenge.svg")
+	challengeSVGFile.save(svg_filepath)
 
-	fileURL = blob_storage_library.uploadFileToBucket(b2_api, bucket, "./static/media/challenge.svg", challengeID+".svg")
-	svgIndexes = json.dumps(process_challenge_files.return_svg_indexes("./static/media/challenge.svg"))
+	fileURL = blob_storage_library.uploadFileToBucket(b2_api, bucket, svg_filepath, challengeID+".svg")
+	svgIndexes = json.dumps(process_challenge_files.return_svg_indexes(svg_filepath))
 
-	os.remove("./static/media/challenge.svg")
+	os.remove(svg_filepath)
 
 	cur.execute(f"""
 		UPDATE challenges
@@ -336,14 +338,16 @@ def process_challenge_midi_file():
 
 	conn, cur = returnDBConnection()
 
+	midi_filepath = os.path.join(os.getenv("temporary_file_storage_path"), "challenge.mid")
+
 	challengeID = request.args.get("challengeID")
 	challengeMIDIFile = request.files.get("challengeMIDIFile")
 
-	challengeMIDIFile.save("./static/media/challenge.mid")
+	challengeMIDIFile.save(midi_filepath)
 
-	music_data = json.dumps(process_challenge_files.return_formatted_midi_notes("./static/media/challenge.mid"))
+	music_data = json.dumps(process_challenge_files.return_formatted_midi_notes(midi_filepath))
 
-	os.remove("./static/media/challenge.mid")
+	os.remove(midi_filepath)
 
 	cur.execute(f"""
 		UPDATE challenges
