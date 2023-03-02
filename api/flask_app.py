@@ -130,9 +130,19 @@ def get_available_courses():
 
 	other_courses = cur.fetchall()
 
+	cur.execute(f"""
+		SELECT coursesEnrolled.courseID, (coursesEnrolled.lastChallengeCompleted / courses.courseNoChallenges * 100)
+		FROM coursesEnrolled
+		INNER JOIN courses
+		ON coursesEnrolled.userID='{userID}';
+	""")
+
+	user_progress = {i[0]: i[1] for i in cur.fetchall()}
+
 	data_to_return = {
 		"courses enrolled": courses_enrolled,
-		"other courses": other_courses
+		"other courses": other_courses,
+		"user progress": user_progress
 	}
 
 	conn.close()
