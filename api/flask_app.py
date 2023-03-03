@@ -9,6 +9,7 @@ import stripe
 from datetime import datetime, timedelta
 import blob_storage_library
 import process_challenge_files
+import requests
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -67,11 +68,14 @@ def user_signup():
 
 	cur.execute(f"""
 		INSERT INTO users
-		VALUES ('{userID}', '{signup_data["userEmail"]}', '{hashed_password}', 0, 0)
+		VALUES ('{userID}', '{signup_data["userEmail"]}', '{hashed_password}', 0, 0, 0)
 	""")
 
 	conn.commit()
 	conn.close()
+
+	# sending email verification
+	requests.get(f"{os.getenv('api_base_url')}/user/send_verification_email", params={"userID": userID}, headers={"Authorisation": os.getenv("beatbuddy_api_key")})
 
 	return jsonify(userID)
 

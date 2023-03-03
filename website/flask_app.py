@@ -82,9 +82,6 @@ def send_verification_email():
 
 @app.route("/user/verify_email", methods=["GET"])
 def verify_email():
-	if not session.get("userID", False):
-		return redirect("/user/login")
-
 	token = request.args.get("token")
 
 	res = requests.get(f"{os.getenv('api_base_url')}/user/verify_email", params={"token": token}, headers=beat_buddy_api_headers)
