@@ -1,10 +1,12 @@
 from flask import Flask, render_template, jsonify, send_from_directory, request
+from flask_mail import Mail, Message
 import json
 import os
 import uuid
 import bcrypt
 import mysql.connector
 import stripe
+from datetime import datetime, timedelta
 import blob_storage_library
 import process_challenge_files
 from dotenv import load_dotenv
@@ -12,6 +14,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
+
+app.config['MAIL_SERVER'] = os.getenv("mail_server")
+app.config['MAIL_PORT'] = int(os.getenv("mail_port"))
+app.config['MAIL_USERNAME'] = os.getenv("mail_username")
+app.config['MAIL_PASSWORD'] = os.getenv("mail_password")
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail = Mail(app)
 
 stripe_keys = {
 	"public_key": os.getenv("stripe_publishable_key"),
@@ -57,7 +67,7 @@ def user_signup():
 
 	cur.execute(f"""
 		INSERT INTO users
-		VALUES ('{userID}', '{signup_data["userEmail"]}', '{hashed_password}', 0)
+		VALUES ('{userID}', '{signup_data["userEmail"]}', '{hashed_password}', 0, 0)
 	""")
 
 	conn.commit()
@@ -75,7 +85,7 @@ def user_login():
 	login_data = request.json
 
 	cur.execute(f"""
-		SELECT userID, userPassword, userAdmin FROM users
+		SELECT userID, userPassword, userAdmin, userEmailVerified FROM users
 		WHERE userEmail = '{login_data["userEmail"]}'
 	""")
 	returned_data = cur.fetchone()
@@ -86,7 +96,7 @@ def user_login():
 		return jsonify("Incorrect")
 
 	if bcrypt.checkpw(login_data["userPassword"].encode(), returned_data[1].encode()):
-		return jsonify({"userID": returned_data[0], "userAdmin": returned_data[2]})
+		return jsonify({"userID": returned_data[0], "userAdmin": returned_data[2], "userEmailVerified": returned_data[3]})
 	else:
 		return jsonify("Incorrect")
 
@@ -250,6 +260,66 @@ def request_midi_notes_to_drum_name():
 	}
 
 	return jsonify(midiNotesToDrumName)
+
+@app.route("/user/send_verification_email", methods=["GET"])
+def send_verification_email():
+	if not authenticate_token():
+		return "Invalid API key", 403
+	
+	conn, cur = returnDBConnection()
+	
+	userID = request.args.get("userID")
+
+	# fetching users email
+	cur.execute(f"SELECT userEmail FROM users WHERE userID='{userID}'")
+	userEmail = cur.fetchone()[0]
+
+	# create random token associated with their userID
+	random_token = str(uuid.uuid4())
+	ttl = (datetime.now() + timedelta(days=1)).timestamp()
+
+	cur.execute(f"""
+		INSERT INTO userEmailVerification
+		VALUES ('{random_token}', '{userID}', '{ttl}')
+	""")
+
+	verify_email_url = os.getenv("website_base_url") + "/user/verify_email?token=" + random_token
+
+	msg = Message('BeatBuddy - Verify your email', sender=os.getenv("mail_username"), recipients=[userEmail])
+	msg.body = f"Thanks for signing up to BeatBuddy, to verify your email, click the link - {verify_email_url}"
+	mail.send(msg)
+
+	conn.commit()
+	conn.close()
+
+	return jsonify(random_token)
+
+@app.route("/user/verify_email", methods=["GET"])
+def verify_email():
+	conn, cur = returnDBConnection()
+
+	token = request.args.get("token")
+
+	cur.execute(f"""
+		SELECT * FROM userEmailVerification WHERE token = '{token}'
+	""")
+	data = cur.fetchall()
+
+	if data == []:
+		return jsonify("There was a problem finding your email, click resend on the homepage")
+	
+	if float(data[0][2]) < datetime.now().timestamp():
+		return jsonify("The link sent to you has expired, click resend on the homepage")
+	
+	if token == data[0][0]:
+		cur.execute(f"UPDATE users SET userEmailVerified=1 WHERE userID='{data[0][1]}'")
+		conn.commit()
+		conn.close()
+
+		return jsonify("Successful")
+	
+	conn.close()
+	return jsonify("There was a problem finding your email, click resend on the homepage")
 
 @app.route("/creator/create_course_entry", methods=["POST"])
 def create_course_entry():

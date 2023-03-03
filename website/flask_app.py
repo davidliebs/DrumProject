@@ -55,7 +55,7 @@ def user_home():
 	res = requests.get(f"{os.getenv('api_base_url')}/user/get_available_courses", params=params, headers=beat_buddy_api_headers)
 	courses = res.json()
 
-	return render_template("user/home.html", courses=courses, userPaid=session["userPaid"], message=message)
+	return render_template("user/home.html", courses=courses, userPaid=session["userPaid"], message=message, userEmailVerified=session["userEmailVerified"])
 
 @app.route("/user/signup", methods=["GET", "POST"])
 def user_signup():
@@ -69,6 +69,28 @@ def user_signup():
 	res = requests.post(f"{os.getenv('api_base_url')}/user/signup", json=data, headers=beat_buddy_api_headers)
 
 	return redirect("/user/login")
+
+@app.route("/user/send_verification_email", methods=["GET"])
+def send_verification_email():
+	if not session.get("userID", False):
+		return redirect("/user/login")
+
+	res = requests.get(f"{os.getenv('api_base_url')}/user/send_verification_email", params={"userID": session["userID"]}, headers=beat_buddy_api_headers)
+	response = res.json()
+
+	return redirect("/user/home")
+
+@app.route("/user/verify_email", methods=["GET"])
+def verify_email():
+	if not session.get("userID", False):
+		return redirect("/user/login")
+
+	token = request.args.get("token")
+
+	res = requests.get(f"{os.getenv('api_base_url')}/user/verify_email", params={"token": token}, headers=beat_buddy_api_headers)
+	response = res.json()
+
+	return render_template("user/verify_email.html", response=response)
 
 @app.route("/user/login", methods=["GET", "POST"])
 def user_login():
@@ -86,6 +108,7 @@ def user_login():
 
 	session["userID"] = res["userID"]
 	session["userAdmin"] = res["userAdmin"]
+	session["userEmailVerified"] = res["userEmailVerified"]
 
 	return redirect("/user/home")
 

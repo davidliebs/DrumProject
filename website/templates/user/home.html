@@ -28,7 +28,7 @@
 	</nav>
 
 	<div class="container">
-		<div class="row mt-5">
+		<div class="row mt-5 verify-email">
 			<div class="col-xl-12 offset-xl-0">
 				<div style="background: var(--bs-red);padding-top: 10px;padding-bottom: 1px;border-radius: 10px;">
 					<p class="text-center" style="font-size: 20px;color: white;background: transparent;border-radius: 0px;padding-top: 0px;padding-bottom: 0px;width: 100%;">It looks like you haven&#39;t verified your email  <a href="/user/send_verification_email" class="btn btn-primary btn-sm" role="button" style="background: transparent;border-radius: 10px;padding-right: 14px;padding-left: 14px;padding-bottom: 0px;padding-top: 0px;font-size: 20px;border-width: 2px;border-color: white;margin-bottom: 3px;"><span style="font-weight: normal !important;">resend</span></a></p>
@@ -89,9 +89,14 @@
 	<script>
 		var userPaid = {{userPaid}};
 		var message = '{{message}}';
+		var userEmailVerified = {{userEmailVerified}};
 
 		if (userPaid === 0) {
 			document.querySelector("#paymentButton").style.display = "initial";
+		}
+
+		if (userEmailVerified == 1) {
+			document.querySelector(".verify-email").style.display = "none";
 		}
 
 		if (message != "") {
