@@ -89,7 +89,7 @@ def user_login():
 	login_data = request.json
 
 	cur.execute(f"""
-		SELECT userID, userPassword, userAdmin, userEmailVerified FROM users
+		SELECT userID, userPassword, userAdmin FROM users
 		WHERE userEmail = '{login_data["userEmail"]}'
 	""")
 	returned_data = cur.fetchone()
@@ -100,12 +100,12 @@ def user_login():
 		return jsonify("Incorrect")
 
 	if bcrypt.checkpw(login_data["userPassword"].encode(), returned_data[1].encode()):
-		return jsonify({"userID": returned_data[0], "userAdmin": returned_data[2], "userEmailVerified": returned_data[3]})
+		return jsonify({"userID": returned_data[0], "userAdmin": returned_data[2]})
 	else:
 		return jsonify("Incorrect")
 
-@app.route("/user/get_paid_status", methods=["GET"])
-def get_paid_status():
+@app.route("/user/get_user_details", methods=["GET"])
+def get_user_details():
 	if not authenticate_token():
 		return "Invalid API key", 403
 
@@ -114,14 +114,14 @@ def get_paid_status():
 	userID = request.args.get("userID")
 
 	cur.execute(f"""
-		SELECT userPaid FROM users WHERE userID = '{userID}'
+		SELECT userPaid, userEmailVerified FROM users WHERE userID = '{userID}'
 	""")
 
-	userPaidStatus = cur.fetchone()[0]
+	userDetails = cur.fetchone()
 
 	conn.close()
 
-	return jsonify(userPaidStatus)
+	return jsonify(userDetails)
 
 @app.route("/user/get_available_courses")
 def get_available_courses():

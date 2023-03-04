@@ -45,11 +45,14 @@ def user_home():
 	if request.args.get("limit_message", False):
 		message = "The number of courses you have enrolled to has reached its limit, upgrade your plan so you can enroll to more"
 
-	# fetching user paid status
+	# fetching user details
 	params = {"userID": session["userID"]}
 
-	res = requests.get(f"{os.getenv('api_base_url')}/user/get_paid_status", params=params, headers=beat_buddy_api_headers)
-	session["userPaid"] = res.json()
+	res = requests.get(f"{os.getenv('api_base_url')}/user/get_user_details", params=params, headers=beat_buddy_api_headers)
+	user_details = res.json()
+
+	session["userPaid"] = user_details[0]
+	session["userEmailVerified"] = user_details[1]
 	
 	# fetching courses to display from api
 	res = requests.get(f"{os.getenv('api_base_url')}/user/get_available_courses", params=params, headers=beat_buddy_api_headers)
@@ -105,7 +108,6 @@ def user_login():
 
 	session["userID"] = res["userID"]
 	session["userAdmin"] = res["userAdmin"]
-	session["userEmailVerified"] = res["userEmailVerified"]
 
 	return redirect("/user/home")
 
