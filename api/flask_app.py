@@ -114,7 +114,7 @@ def get_user_details():
 	userID = request.args.get("userID")
 
 	cur.execute(f"""
-		SELECT userPaid, userEmailVerified FROM users WHERE userID = '{userID}'
+		SELECT userPaid, userEmailVerified, userEmail FROM users WHERE userID = '{userID}'
 	""")
 
 	userDetails = cur.fetchone()

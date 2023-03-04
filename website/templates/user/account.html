@@ -1,0 +1,74 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>home</title>
+    <meta name="description" content="The most interactive way to drum" />
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/user/bootstrap.min.css') }}">
+</head>
+
+<body style="background: #27262e;">
+    <nav id="mainNav" class="navbar navbar-dark navbar-expand-md sticky-top navbar-shrink py-3">
+        <div class="container">
+			<a class="navbar-brand d-flex align-items-center" href="/user/"><img src="{{ url_for('static', filename='media/beatbuddy.svg') }}" style="width: 237px;" /></a>
+            <div id="navcol-1" class="collapse navbar-collapse">
+                <ul class="navbar-nav mx-auto"></ul><a class="btn btn-primary" role="button" style="background: transparent;border-color: transparent;" href="/user/logout">Log out</a><a class="btn btn-primary" role="button" style="background: var(--bs-btn-bg);border-color: transparent;" href="/user/payment">Upgrade</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-xl-8 offset-xl-2">
+                <div class="card" style="backdrop-filter: brightness(0%);padding: 16px;">
+                    <div class="card-header" style="background: rgba(0,0,0,0);">
+                        <h2 class="text-center" style="border-color: rgba(0,0,0,0);">Account details</h2>
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <ul class="nav nav-pills" role="tablist">
+                                <li class="nav-item" role="presentation"><a class="nav-link" role="tab" data-bs-toggle="pill" href="#tab-1" style="color: var(--bs-white);"><strong>Email</strong></a></li>
+                                <li class="nav-item" role="presentation"><a class="nav-link" role="tab" data-bs-toggle="pill" href="#tab-2" style="color: var(--bs-card-bg);"><strong>Security</strong></a></li>
+                                <li class="nav-item" role="presentation"><a class="nav-link" role="tab" data-bs-toggle="pill" href="#tab-3" style="color: var(--bs-card-bg);"><strong>Subscription</strong></a></li>
+                                <li class="nav-item" role="presentation"><a class="nav-link" role="tab" data-bs-toggle="pill" href="#tab-4" style="color: rgb(255,255,255);"><strong>Account</strong></a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <div id="tab-1" class="tab-pane" role="tabpanel">
+                                    <div class="verify-email mt-2" style="background: var(--bs-red);padding-top: 10px;padding-bottom: 1px;border-radius: 10px;height: 3%;">
+                                        <p class="text-center" style="font-size: 20px;color: white;background: transparent;border-radius: 0px;padding-top: 0px;padding-bottom: 0px;width: 100%;">It looks like you haven&#39;t verified your email  <a href="/user/send_verification_email" class="btn btn-primary btn-sm" role="button" style="background: transparent;border-radius: 10px;padding-right: 14px;padding-left: 14px;padding-bottom: 0px;padding-top: 0px;font-size: 20px;border-width: 2px;border-color: white;margin-bottom: 3px;"><span style="font-weight: normal !important;">resend</span></a></p>
+                                    </div>
+                                    <form class="mt-3">
+                                        <p style="color: var(--bs-card-bg);margin-bottom: 0px;font-size: 19px;"><strong>Current email</strong></p>
+                                        <p>Your email is <span><strong>{{userEmail}}</strong></span></p><label class="form-label" style="color: rgb(140,138,138);" for="emailInput"><strong>New email address</strong></label><input id="emailInput" class="form-control" type="email" style="border-radius: 5px;border-width: 0px;border-color: var(--bs-card-cap-bg);padding-left: 7px;" placeholder="Enter new email address" /><button class="btn btn-primary mt-3" type="button" style="border-radius: 5px;padding: 2.6px 32px;padding-right: 10px;padding-left: 10px;">Save changes</button>
+                                    </form>
+                                </div>
+                                <div id="tab-2" class="tab-pane" role="tabpanel">
+                                    <form class="mt-3">
+                                        <p style="color: var(--bs-card-bg);margin-bottom: 0px;font-size: 19px;"><strong>Change your password</strong></p><label class="form-label mt-2" style="color: rgb(140,138,138);" for="currentPasswordInput"><strong>Current password</strong></label><input id="currentPasswordInput" class="form-control" type="email" style="border-radius: 5px;border-width: 0px;border-color: var(--bs-card-cap-bg);padding-left: 7px;" placeholder="Enter current password" /><label class="form-label mt-2" style="color: rgb(140,138,138);" for="newPasswordInput"><strong>New password</strong></label><input id="newPasswordInput" class="form-control" type="email" style="border-radius: 5px;border-width: 0px;border-color: var(--bs-card-cap-bg);padding-left: 7px;" placeholder="Enter new password" /><button class="btn btn-primary mt-3" type="button" style="border-radius: 5px;padding: 2.6px 32px;padding-right: 10px;padding-left: 10px;">Save changes</button>
+                                    </form>
+                                </div>
+                                <div id="tab-3" class="tab-pane" role="tabpanel" style="text-align: left;">
+                                    <p class="mt-3" style="color: var(--bs-card-bg);margin-bottom: 0px;font-size: 19px;"><strong>Your currently on the BeatBuddy basic plan </strong></p><a class="btn btn-primary" role="button" style="background: var(--bs-btn-bg);border-color: transparent;" href="/user/payment">Upgrade</a>
+                                </div>
+								<div id="tab-4" class="tab-pane" role="tabpanel" style="text-align: left;">
+									<a class="btn btn-primary" role="button" style="background: var(--bs-red);border-color: transparent;" href="/user/delete-account">Delete account</a>
+								</div>
+							</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+	<script>
+		var userEmailVerified = {{userEmailVerified}};
+
+		if (userEmailVerified == 1) {
+			document.querySelector(".verify-email").style.display = "none";
+		}
+	</script>
+</body>
+
+</html>

@@ -224,7 +224,23 @@ def create_checkout_session():
 
 @app.route("/user/payment/success")
 def payment_success():
+	if not session.get("userID", False):
+		return redirect("/user/login")
+
 	return render_template("user/payment-success.html")
+
+@app.route("/user/account")
+def user_account():
+	if not session.get("userID", False):
+		return redirect("/user/login")
+
+	# fetching user details
+	params = {"userID": session["userID"]}
+
+	res = requests.get(f"{os.getenv('api_base_url')}/user/get_user_details", params=params, headers=beat_buddy_api_headers)
+	user_details = res.json()
+
+	return render_template("user/account.html", userPaid=user_details[0], userEmailVerified=user_details[1], userEmail=user_details[2])
 
 @app.route("/creator/home")
 def creator_home():
