@@ -51,7 +51,9 @@
                                     <p class="mt-3" style="color: var(--bs-card-bg);margin-bottom: 0px;font-size: 19px;"><strong>Your currently on the BeatBuddy basic plan </strong></p><a class="btn btn-primary" role="button" style="background: var(--bs-btn-bg);border-color: transparent;" href="/user/payment">Upgrade</a>
                                 </div>
 								<div id="tab-4" class="tab-pane" role="tabpanel" style="text-align: left;">
-									<a class="btn btn-primary mt-5" role="button" style="background: var(--bs-red);border-color: transparent;" href="/user/delete-account">Delete account</a>
+									<form method="POST" action="/user/delete-account">
+										<button class="btn btn-primary mt-5" type="submit" style="background: var(--bs-red);border-color: transparent;">Delete account</button>
+									</form>
 								</div>
 							</div>
                         </div>

@@ -133,13 +133,13 @@ def get_available_courses():
 	userID = request.args.get("userID")
 
 	cur.execute(f"""
-		SELECT * FROM courses WHERE courseID IN (SELECT courseID FROM coursesEnrolled WHERE userID = '{userID}');
+		SELECT * FROM courses WHERE courseID IN (SELECT courseID FROM coursesEnrolled WHERE userID = '{userID}')
 	""")
 
 	courses_enrolled = cur.fetchall()
 
 	cur.execute(f"""
-		SELECT * FROM courses WHERE courseID NOT IN (SELECT courseID FROM coursesEnrolled WHERE userID = '{userID}');
+		SELECT * FROM courses WHERE courseID NOT IN (SELECT courseID FROM coursesEnrolled WHERE userID = '{userID}')
 	""")
 
 	other_courses = cur.fetchall()
@@ -148,7 +148,7 @@ def get_available_courses():
 		SELECT coursesEnrolled.courseID, (coursesEnrolled.lastChallengeCompleted / courses.courseNoChallenges * 100)
 		FROM coursesEnrolled
 		INNER JOIN courses
-		ON coursesEnrolled.userID='{userID}';
+		ON coursesEnrolled.userID='{userID}'
 	""")
 
 	user_progress = {i[0]: i[1] for i in cur.fetchall()}
@@ -362,6 +362,23 @@ def change_password():
 	cur.execute(f"""
 		UPDATE users SET userPassword = '{hashed_password}'
 	""")
+
+	conn.commit()
+	conn.close()
+
+	return jsonify("Successful")
+
+@app.route("/user/delete_account", methods=["GET"])
+def delete_account():
+	if not authenticate_token():
+		return "Invalid API key", 403
+	
+	conn, cur = returnDBConnection()
+	
+	userID = request.args.get("userID")
+
+	cur.execute(f"DELETE FROM users WHERE userID = '{userID}'")
+	cur.execute(f"DELETE FROM coursesEnrolled WHERE userID = '{userID}';")
 
 	conn.commit()
 	conn.close()

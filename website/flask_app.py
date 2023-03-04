@@ -278,6 +278,15 @@ def change_password():
 
 	return redirect("/user/logout")
 
+@app.route("/user/delete-account", methods=["POST"])
+def delete_account():
+	if not session.get("userID", False):
+		return redirect("/user/login")
+
+	requests.get(f"{os.getenv('api_base_url')}/user/delete_account", params={"userID": session["userID"]}, headers=beat_buddy_api_headers)
+
+	return redirect("/user/logout")
+
 @app.route("/creator/home")
 def creator_home():
 	if not session.get("userID", False) or session.get("userAdmin", False) != 1:
