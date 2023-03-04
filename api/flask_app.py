@@ -325,6 +325,23 @@ def verify_email():
 	conn.close()
 	return jsonify("There was a problem finding your email, click resend on the homepage")
 
+@app.route("/user/change_email", methods=["GET"])
+def change_email():
+	conn, cur = returnDBConnection()
+
+	userID = request.args.get("userID")
+	newEmail = request.args.get("newEmail")
+
+	cur.execute(f"""
+		UPDATE users SET userEmail='{newEmail}', userEmailVerified=0
+		WHERE userID = '{userID}'
+	""")
+
+	conn.commit()
+	conn.close()
+
+	return jsonify("Successful")
+
 @app.route("/creator/create_course_entry", methods=["POST"])
 def create_course_entry():
 	if not authenticate_token():

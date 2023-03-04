@@ -229,7 +229,7 @@ def payment_success():
 
 	return render_template("user/payment-success.html")
 
-@app.route("/user/account")
+@app.route("/user/account", methods=["GET"])
 def user_account():
 	if not session.get("userID", False):
 		return redirect("/user/login")
@@ -241,6 +241,20 @@ def user_account():
 	user_details = res.json()
 
 	return render_template("user/account.html", userPaid=user_details[0], userEmailVerified=user_details[1], userEmail=user_details[2])
+
+@app.route("/user/change-email", methods=["POST"])
+def user_change_email():
+	if not session.get("userID", False):
+		return redirect("/user/login")
+
+	# ping api endpoint to change email
+	params = {"userID": session["userID"], "newEmail": request.form.get("newEmail")}
+	requests.get(f"{os.getenv('api_base_url')}/user/change_email", params=params, headers=beat_buddy_api_headers)
+
+	# ping api endpoint to send email verification
+	requests.get(f"{os.getenv('api_base_url')}/user/send_verification_email", params={"userID": session["userID"]}, headers=beat_buddy_api_headers)
+
+	return redirect("/user/account")
 
 @app.route("/creator/home")
 def creator_home():
