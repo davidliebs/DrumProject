@@ -300,6 +300,9 @@ def send_verification_email():
 
 @app.route("/user/verify_email", methods=["GET"])
 def verify_email():
+	if not authenticate_token():
+		return "Invalid API key", 403
+
 	conn, cur = returnDBConnection()
 
 	token = request.args.get("token")
@@ -327,6 +330,9 @@ def verify_email():
 
 @app.route("/user/change_email", methods=["GET"])
 def change_email():
+	if not authenticate_token():
+		return "Invalid API key", 403
+
 	conn, cur = returnDBConnection()
 
 	userID = request.args.get("userID")
@@ -335,6 +341,26 @@ def change_email():
 	cur.execute(f"""
 		UPDATE users SET userEmail='{newEmail}', userEmailVerified=0
 		WHERE userID = '{userID}'
+	""")
+
+	conn.commit()
+	conn.close()
+
+	return jsonify("Successful")
+
+@app.route("/user/change_password", methods=["POST"])
+def change_password():
+	if not authenticate_token():
+		return "Invalid API key", 403
+
+	conn, cur = returnDBConnection()
+
+	data = request.json
+
+	hashed_password = bcrypt.hashpw(data["newPassword"].encode(), bcrypt.gensalt()).decode()
+
+	cur.execute(f"""
+		UPDATE users SET userPassword = '{hashed_password}'
 	""")
 
 	conn.commit()

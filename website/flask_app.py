@@ -53,6 +53,7 @@ def user_home():
 
 	session["userPaid"] = user_details[0]
 	session["userEmailVerified"] = user_details[1]
+	session["userEmail"] = user_details[2]
 	
 	# fetching courses to display from api
 	res = requests.get(f"{os.getenv('api_base_url')}/user/get_available_courses", params=params, headers=beat_buddy_api_headers)
@@ -255,6 +256,27 @@ def user_change_email():
 	requests.get(f"{os.getenv('api_base_url')}/user/send_verification_email", params={"userID": session["userID"]}, headers=beat_buddy_api_headers)
 
 	return redirect("/user/account")
+
+@app.route("/user/change-password", methods=["POST"])
+def change_password():
+	if not session.get("userID", False):
+		return redirect("/user/login")
+
+	currentPassword = request.form.get("currentPassword")
+	newPassword = request.form.get("newPassword")
+
+	# using api login endpoint to verify password from user == to their current password
+	data = {"userEmail": session["userEmail"], "userPassword": currentPassword}
+	res = requests.post(f"{os.getenv('api_base_url')}/user/login", json=data, headers=beat_buddy_api_headers).json()
+
+	if res == "Incorrect":
+		return redirect("/user/account")
+
+	# updating their password
+	data = {"userID": session["userID"], "userEmail": session["userEmail"], "newPassword": newPassword}
+	requests.post(f"{os.getenv('api_base_url')}/user/change_password", json=data, headers=beat_buddy_api_headers)
+
+	return redirect("/user/logout")
 
 @app.route("/creator/home")
 def creator_home():
