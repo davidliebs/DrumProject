@@ -48,7 +48,7 @@ def user_home():
 	# fetching user details
 	params = {"userID": session["userID"]}
 
-	res = requests.get(f"{os.getenv('api_base_url')}/user/get_user_details", params=params, headers=beat_buddy_api_headers)
+	res = requests.get(f"{os.getenv('api_base_url')}/userInfo/get_user_details", params=params, headers=beat_buddy_api_headers)
 	user_details = res.json()
 
 	session["userPaid"] = user_details[0]
@@ -56,7 +56,7 @@ def user_home():
 	session["userEmail"] = user_details[2]
 	
 	# fetching courses to display from api
-	res = requests.get(f"{os.getenv('api_base_url')}/user/get_available_courses", params=params, headers=beat_buddy_api_headers)
+	res = requests.get(f"{os.getenv('api_base_url')}/userInfo/get_available_courses", params=params, headers=beat_buddy_api_headers)
 	courses = res.json()
 
 	return render_template("user/home.html", courses=courses, userPaid=session["userPaid"], message=message, userEmailVerified=session["userEmailVerified"])
@@ -70,7 +70,7 @@ def user_signup():
 	user_pwd = request.form["userPassword"]
 
 	data = {"userEmail": user_email, "userPassword": user_pwd}
-	res = requests.post(f"{os.getenv('api_base_url')}/user/signup", json=data, headers=beat_buddy_api_headers)
+	res = requests.post(f"{os.getenv('api_base_url')}/userAuth/signup", json=data, headers=beat_buddy_api_headers)
 
 	return redirect("/user/login")
 
@@ -79,7 +79,7 @@ def send_verification_email():
 	if not session.get("userID", False):
 		return redirect("/user/login")
 
-	res = requests.get(f"{os.getenv('api_base_url')}/user/send_verification_email", params={"userID": session["userID"]}, headers=beat_buddy_api_headers)
+	res = requests.get(f"{os.getenv('api_base_url')}/emailHandler/send_verification_email", params={"userID": session["userID"]}, headers=beat_buddy_api_headers)
 	response = res.json()
 
 	return redirect("/user/home")
@@ -88,7 +88,7 @@ def send_verification_email():
 def verify_email():
 	token = request.args.get("token")
 
-	res = requests.get(f"{os.getenv('api_base_url')}/user/verify_email", params={"token": token}, headers=beat_buddy_api_headers)
+	res = requests.get(f"{os.getenv('api_base_url')}/userAuth/verify_email", params={"token": token}, headers=beat_buddy_api_headers)
 	response = res.json()
 
 	return render_template("user/verify_email.html", response=response)
@@ -102,7 +102,7 @@ def user_login():
 	user_pwd = request.form["userPassword"]
 
 	data = {"userEmail": user_email, "userPassword": user_pwd}
-	res = requests.post(f"{os.getenv('api_base_url')}/user/login", json=data, headers=beat_buddy_api_headers).json()
+	res = requests.post(f"{os.getenv('api_base_url')}/userAuth/login", json=data, headers=beat_buddy_api_headers).json()
 
 	if res == "Incorrect":
 		return redirect("/user/login")
@@ -128,10 +128,10 @@ def challenge():
 
 	# fetching required data from api
 	params = {"courseID": session["courseID"], "challengeID": session["challengeID"]}
-	res = requests.get(f"{os.getenv('api_base_url')}/user/request_music_notation_data", params=params, headers=beat_buddy_api_headers)
+	res = requests.get(f"{os.getenv('api_base_url')}/challenge/request_music_notation_data", params=params, headers=beat_buddy_api_headers)
 	music_notation_data, svg_indexes, challengeTitle, challengeMessage, challengeSvgURL = res.json()
 
-	res = requests.get(f"{os.getenv('api_base_url')}/user/request_midi_notes_to_drum_name", params={"userID": session["userID"]}, headers=beat_buddy_api_headers)
+	res = requests.get(f"{os.getenv('api_base_url')}/challenge/request_midi_notes_to_drum_name", params={"userID": session["userID"]}, headers=beat_buddy_api_headers)
 	midi_notes_to_drum_name = res.json()
 
 	if midi_notes_to_drum_name == "no drum kits":
@@ -166,7 +166,7 @@ def next_challenge():
 	session["courseID"] = courseID
 
 	params = {"userID": session["userID"], "courseID": courseID, "challengeID": challengeID}
-	res = requests.get(f"{os.getenv('api_base_url')}/user/get_next_challengeID", params=params, headers=beat_buddy_api_headers)
+	res = requests.get(f"{os.getenv('api_base_url')}/challenge/get_next_challengeID", params=params, headers=beat_buddy_api_headers)
 
 	session["challengeID"] = res.json()
 
@@ -178,7 +178,7 @@ def enroll_course():
 	courseID = request.args.get("courseID")
 
 	params = {"userID": userID, "courseID": courseID, "userPaid": session["userPaid"]}
-	res = requests.get(f"{os.getenv('api_base_url')}/user/enroll_course", params=params, headers=beat_buddy_api_headers)
+	res = requests.get(f"{os.getenv('api_base_url')}/course/enroll_course", params=params, headers=beat_buddy_api_headers)
 
 	if res.json() == "Limit reached":
 		return redirect("/user/home?limit_message=1")
@@ -238,7 +238,7 @@ def user_account():
 	# fetching user details
 	params = {"userID": session["userID"]}
 
-	res = requests.get(f"{os.getenv('api_base_url')}/user/get_user_details", params=params, headers=beat_buddy_api_headers)
+	res = requests.get(f"{os.getenv('api_base_url')}/userInfo/get_user_details", params=params, headers=beat_buddy_api_headers)
 	user_details = res.json()
 
 	return render_template("user/account.html", userPaid=user_details[0], userEmailVerified=user_details[1], userEmail=user_details[2])
@@ -250,10 +250,10 @@ def user_change_email():
 
 	# ping api endpoint to change email
 	params = {"userID": session["userID"], "newEmail": request.form.get("newEmail")}
-	requests.get(f"{os.getenv('api_base_url')}/user/change_email", params=params, headers=beat_buddy_api_headers)
+	requests.get(f"{os.getenv('api_base_url')}/userAuth/change_email", params=params, headers=beat_buddy_api_headers)
 
 	# ping api endpoint to send email verification
-	requests.get(f"{os.getenv('api_base_url')}/user/send_verification_email", params={"userID": session["userID"]}, headers=beat_buddy_api_headers)
+	requests.get(f"{os.getenv('api_base_url')}/email/send_verification_email", params={"userID": session["userID"]}, headers=beat_buddy_api_headers)
 
 	return redirect("/user/account")
 
@@ -267,14 +267,14 @@ def change_password():
 
 	# using api login endpoint to verify password from user == to their current password
 	data = {"userEmail": session["userEmail"], "userPassword": currentPassword}
-	res = requests.post(f"{os.getenv('api_base_url')}/user/login", json=data, headers=beat_buddy_api_headers).json()
+	res = requests.post(f"{os.getenv('api_base_url')}/userAuth/login", json=data, headers=beat_buddy_api_headers).json()
 
 	if res == "Incorrect":
 		return redirect("/user/account")
 
 	# updating their password
 	data = {"userID": session["userID"], "userEmail": session["userEmail"], "newPassword": newPassword}
-	requests.post(f"{os.getenv('api_base_url')}/user/change_password", json=data, headers=beat_buddy_api_headers)
+	requests.post(f"{os.getenv('api_base_url')}/userAuth/change_password", json=data, headers=beat_buddy_api_headers)
 
 	return redirect("/user/logout")
 
@@ -283,7 +283,7 @@ def delete_account():
 	if not session.get("userID", False):
 		return redirect("/user/login")
 
-	requests.get(f"{os.getenv('api_base_url')}/user/delete_account", params={"userID": session["userID"]}, headers=beat_buddy_api_headers)
+	requests.get(f"{os.getenv('api_base_url')}/userAuth/delete_account", params={"userID": session["userID"]}, headers=beat_buddy_api_headers)
 
 	return redirect("/user/logout")
 

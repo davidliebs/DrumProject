@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from models import returnDBConnection, authenticate_token
 
 from dotenv import load_dotenv
