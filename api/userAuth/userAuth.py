@@ -60,39 +60,6 @@ def user_signup():
 
 	return jsonify(userID)
 
-@userAuth_bp.route("/send_verification_email", methods=["GET"])
-def send_verification_email():
-	if not authenticate_token(request.headers):
-		return "Invalid API key", 403
-	
-	conn, cur = returnDBConnection()
-	
-	userID = request.args.get("userID")
-
-	# fetching users email
-	cur.execute(f"SELECT userEmail FROM users WHERE userID='{userID}'")
-	userEmail = cur.fetchone()[0]
-
-	# create random token associated with their userID
-	random_token = str(uuid.uuid4())
-	ttl = (datetime.now() + timedelta(days=1)).timestamp()
-
-	cur.execute(f"""
-		INSERT INTO userEmailVerification
-		VALUES ('{random_token}', '{userID}', '{ttl}')
-	""")
-
-	verify_email_url = os.getenv("website_base_url") + "/user/verify_email?token=" + random_token
-
-	msg = Message('BeatBuddy - Verify your email', sender=os.getenv("mail_username"), recipients=[userEmail])
-	msg.body = f"Thanks for signing up to BeatBuddy, to verify your email, click the link - {verify_email_url}"
-	mail.send(msg)
-
-	conn.commit()
-	conn.close()
-
-	return jsonify(random_token)
-
 @userAuth_bp.route("/verify_email", methods=["GET"])
 def verify_email():
 	if not authenticate_token(request.headers):
@@ -109,9 +76,11 @@ def verify_email():
 
 	if data == []:
 		return jsonify("There was a problem finding your email, click resend on the homepage")
+		conn.close()
 	
 	if float(data[0][2]) < datetime.now().timestamp():
 		return jsonify("The link sent to you has expired, click resend on the homepage")
+		conn.close()
 	
 	if token == data[0][0]:
 		cur.execute(f"UPDATE users SET userEmailVerified=1 WHERE userID='{data[0][1]}'")
@@ -156,6 +125,7 @@ def change_password():
 
 	cur.execute(f"""
 		UPDATE users SET userPassword = '{hashed_password}'
+		WHERE userID = '{data["userID"]}'
 	""")
 
 	conn.commit()
@@ -179,3 +149,49 @@ def delete_account():
 	conn.close()
 
 	return jsonify("Successful")
+
+@userAuth_bp.route("/check_email_exists", methods=["POST"])
+def check_email_exists():
+	if not authenticate_token(request.headers):
+		return "Invalid API key", 403
+	
+	conn, cur = returnDBConnection()
+
+	userEmail = request.json.get("userEmail")
+
+	cur.execute(f"SELECT userID from users WHERE userEmail='{userEmail}'")
+	data_returned = cur.fetchall()
+
+	conn.close()
+
+	if data_returned == []:
+		return jsonify(False)
+		
+	userID = data_returned[0][0]
+
+	return jsonify({"userID": userID})
+
+@userAuth_bp.route("/verify_reset_password_token", methods=["POST"])
+def verify_reset_password_token():
+	if not authenticate_token(request.headers):
+		return "Invalid API key", 403
+	
+	conn, cur = returnDBConnection()
+
+	data = request.json
+
+	userID = data.get("userID")
+	token = data.get("token")
+
+	cur.execute(f"SELECT ttl FROM userEmailVerification WHERE token='{token}' AND userID='{userID}'")
+	data_returned = cur.fetchall()
+
+	conn.close()
+	
+	if data_returned == []:
+		return jsonify(False)
+	
+	if float(data_returned[0][0]) < datetime.now().timestamp():
+		return jsonify(False)
+	
+	return jsonify(True)

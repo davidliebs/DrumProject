@@ -273,7 +273,7 @@ def change_password():
 		return redirect("/user/account")
 
 	# updating their password
-	data = {"userID": session["userID"], "userEmail": session["userEmail"], "newPassword": newPassword}
+	data = {"userID": session["userID"], "newPassword": newPassword}
 	requests.post(f"{os.getenv('api_base_url')}/userAuth/change_password", json=data, headers=beat_buddy_api_headers)
 
 	return redirect("/user/logout")
@@ -284,6 +284,64 @@ def delete_account():
 		return redirect("/user/login")
 
 	requests.get(f"{os.getenv('api_base_url')}/userAuth/delete_account", params={"userID": session["userID"]}, headers=beat_buddy_api_headers)
+
+	return redirect("/user/logout")
+
+@app.route("/user/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+	if request.method == "GET":
+		message = ""
+		if request.args.get("message") == "1":
+			message = "That email isn't in our database"
+		elif request.args.get("message") == "2":
+			message = "The link sent to your email has expired"
+		elif request.args.get("message") == "3":
+			message = "An email has been sent to you to reset your password"
+
+		return render_template("user/forgot_password.html", message=message)
+	
+	if request.method == "POST":
+		userEmail = request.form.get("userEmail")
+
+		# check their email exists	
+		payload = {"userEmail": userEmail}
+		res = requests.post(f"{os.getenv('api_base_url')}/userAuth/check_email_exists", json=payload, headers=beat_buddy_api_headers)
+
+		data = res.json()
+
+		if data == False:
+			return redirect("/user/forgot-password?message=1")
+		
+		userID = data.get("userID")
+		session["userID"] = userID
+
+		# send email with link to reset their password
+		payload = {"userID": userID, "userEmail": userEmail}
+		requests.post(f"{os.getenv('api_base_url')}/emailHandler/send_forgot_password_email", json=payload, headers=beat_buddy_api_headers)
+
+		return redirect("/user/forgot-password?message=3")
+
+@app.route("/user/reset-password", methods=["GET", "POST"])
+def reset_password():
+	if not session.get("userID", False):
+		return redirect("/user/login")
+
+	if request.method == "GET":
+		return render_template("user/reset_password.html", token=request.args.get("token"))
+	
+	newPassword = request.form.get("newPassword")
+	token = request.form.get("token")
+
+	# verifying token is valid
+	data = {"userID": session["userID"], "token": token}
+	res = requests.post(f"{os.getenv('api_base_url')}/userAuth/verify_reset_password_token", json=data, headers=beat_buddy_api_headers)
+
+	if res.json() == False:
+		return redirect("/user/forgot-password?message=2")
+
+	# sending request to reset password
+	data = {"userID": session["userID"], "newPassword": newPassword}
+	requests.post(f"{os.getenv('api_base_url')}/userAuth/change_password", json=data, headers=beat_buddy_api_headers)
 
 	return redirect("/user/logout")
 
