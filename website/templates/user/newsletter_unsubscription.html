@@ -1,0 +1,26 @@
+<html lang="en" style="--highlight-bg:#fff; --highlight-color:#000; --box-highlight:rgba(55,99,244,0.8);">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>home</title>
+    <meta name="description" content="The most interactive way to drum" />
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user/bootstrap.min.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-xl-6 offset-xl-3">
+                <form method="POST" action="/user/unsubscribe-from-newsletter">
+					<label class="form-label fw-bolder" for="email">Enter your email to unsubscribe from the newsletter</label>
+					<input name="email" class="form-control" type="email" placeholder="Enter your email" name="email" required />
+					<button class="btn btn-primary mt-1" type="submit">Unsubscribe</button>
+				</form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

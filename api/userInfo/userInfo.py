@@ -66,3 +66,23 @@ def get_available_courses():
 	conn.close()
 
 	return jsonify(data_to_return)
+
+@userInfo_bp.route("/subscribe_to_newsletter", methods=["POST"])
+def subscribe_to_newsletter():
+	if not authenticate_token(request.headers):
+		return "Invalid API key", 403
+
+	conn, cur = returnDBConnection()
+
+	email = request.json.get("email")
+	subscribe = request.json.get("subscribe")
+
+	if subscribe == "yes":
+		cur.execute(f"INSERT INTO newsletter VALUES('{email}')")
+	elif subscribe == "no":
+		cur.execute(f"DELETE FROM newsletter WHERE email='{email}'")
+	
+	conn.commit()
+	conn.close()
+
+	return jsonify(True)

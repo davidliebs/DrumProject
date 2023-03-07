@@ -345,6 +345,27 @@ def reset_password():
 
 	return redirect("/user/logout")
 
+@app.route("/user/subscribe-to-newsletter", methods=["POST"])
+def subscribe_to_newsletter():
+	emailToAdd = request.form.get("email")
+
+	data = {"email": emailToAdd, "subscribe": "yes"}
+	requests.post(f"{os.getenv('api_base_url')}/userInfo/subscribe_to_newsletter", json=data, headers=beat_buddy_api_headers)
+
+	return redirect("/")
+
+@app.route("/user/unsubscribe-from-newsletter", methods=["GET", "POST"])
+def unsubscribe_from_newsletter():
+	if request.method == "GET":
+		return render_template("user/newsletter_unsubscription.html")
+
+	emailToRemove = request.form.get("email")
+
+	data = {"email": emailToRemove, "subscribe": "no"}
+	requests.post(f"{os.getenv('api_base_url')}/userInfo/subscribe_to_newsletter", json=data, headers=beat_buddy_api_headers)
+
+	return redirect("/")
+
 @app.route("/creator/home")
 def creator_home():
 	if not session.get("userID", False) or session.get("userAdmin", False) != 1:
