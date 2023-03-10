@@ -366,6 +366,10 @@ def unsubscribe_from_newsletter():
 
 	return redirect("/")
 
+@app.route("/user/terms-and-conditions", methods=["GET"])
+def terms_and_conditions():
+	return render_template("user/terms_and_conditions.html")
+
 @app.route("/creator/home")
 def creator_home():
 	if not session.get("userID", False) or session.get("userAdmin", False) != 1:
