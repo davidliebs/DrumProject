@@ -5,6 +5,8 @@ import bcrypt
 from dotenv import load_dotenv
 import os
 from datetime import datetime, timedelta
+import uuid
+import requests
 
 load_dotenv()
 
@@ -56,7 +58,7 @@ def user_signup():
 	conn.close()
 
 	# sending email verification
-	requests.get(f"{os.getenv('api_base_url')}/user/send_verification_email", params={"userID": userID}, headers={"Authorisation": os.getenv("beatbuddy_api_key")})
+	requests.get(f"{os.getenv('api_base_url')}/emailHandler/send_verification_email", params={"userID": userID}, headers={"Authorisation": os.getenv("beatbuddy_api_key")})
 
 	return jsonify(userID)
 

@@ -14,7 +14,8 @@ app.secret_key = os.getenv("app_secret_key")
 
 stripe_keys = {
 	"public_key": os.getenv("stripe_publishable_key"),
-	"secret_key": os.getenv("stripe_secret_key")
+	"secret_key": os.getenv("stripe_secret_key"),
+	"price_id": os.getenv("price_id")
 }
 
 beat_buddy_api_headers = {"Authorisation": os.getenv("beatbuddy_api_key")}
@@ -212,11 +213,15 @@ def create_checkout_session():
 			mode="subscription",
 			line_items=[
 				{
-					"price": "price_1McoKrIe9NIvPil7UyC1v8ed",
-					"quantity": 1
+					"price": stripe_keys["price_id"],
+					"quantity": 1,
 				}
 			],
-			client_reference_id=session["userID"]
+			subscription_data = {
+				"metadata": {
+					"userID": session["userID"]
+				}
+			}
 		)
 		return jsonify({"sessionId": checkout_session["id"]})
 
