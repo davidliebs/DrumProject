@@ -235,6 +235,16 @@ def payment_success():
 
 	return render_template("user/payment-success.html")
 
+@app.route("/user/cancel_subscription")
+def cancel_subscription():
+	if not session.get("userID", False):
+		return redirect("/user/login")
+	
+	data = {"userID": session["userID"]}
+	requests.post(f"{os.getenv('api_base_url')}/payment/cancel_subscription", json=data, headers=beat_buddy_api_headers)
+
+	return redirect("/user/account")
+
 @app.route("/user/account", methods=["GET"])
 def user_account():
 	if not session.get("userID", False):

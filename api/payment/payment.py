@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from models import returnDBConnection
+from models import returnDBConnection, authenticate_token
 
 import os
 from dotenv import load_dotenv
@@ -34,10 +34,10 @@ def stripe_webhook():
 	if event["type"] == "invoice.paid":
 		payload = json.loads(payload)
 
-		conn, cur = returnDBConnection()
+		stripeSubscriptionID = payload["data"]["object"]["lines"]["data"][0]["subscription"]
 
-		# getting user ID
-		subscription_data = stripe.Subscription.retrieve(payload["data"]["object"]["lines"]["data"][0]["subscription"])
+		# getting user ID from metadata in subscription
+		subscription_data = stripe.Subscription.retrieve(stripeSubscriptionID)
 		userID = subscription_data["metadata"]["userID"]
 
 		# if they have paid their invoice, create a record in the userPayment table
@@ -45,10 +45,12 @@ def stripe_webhook():
 
 		renewal_date = (datetime.now()+timedelta(days=34)).strftime("%Y-%m-%d")
 
+		conn, cur = returnDBConnection()
+
 		cur.execute(f"""
-			INSERT INTO userPayment(userID, subscriptionEnds) VALUES ('{userID}', '{renewal_date}')
+			INSERT INTO userPayment(userID, subscriptionEnds, stripeSubscriptionID) VALUES ('{userID}', '{renewal_date}', '{stripeSubscriptionID}')
 			ON DUPLICATE KEY
-			UPDATE subscriptionEnds = '{renewal_date}'
+			UPDATE subscriptionEnds = '{renewal_date}', stripeSubscriptionID='{stripeSubscriptionID}'
 		""")
 
 		cur.execute(f"""
@@ -61,3 +63,21 @@ def stripe_webhook():
 		conn.close()
 
 	return "Success", 200
+
+@payment_bp.route("/cancel_subscription", methods=["POST"])
+def cancel_subscription():
+	if not authenticate_token(request.headers):
+		return "Invalid API key", 403
+
+	conn, cur = returnDBConnection()
+	
+	userID = request.json["userID"]
+
+	cur.execute(f"""
+		SELECT stripeSubscriptionID FROM userPayment WHERE userID='{userID}'
+	""")
+	stripeSubscriptionID = cur.fetchone()[0]
+
+	stripe.Subscription.delete(stripeSubscriptionID)
+
+	return "Success"
